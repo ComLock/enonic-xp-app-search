@@ -4,7 +4,7 @@
 import {toStr} from '/lib/enonic/util';
 import {forceArray} from '/lib/enonic/util/data';
 import {get as getContentByKey} from '/lib/xp/content';
-import {multiRepoConnect} from '/lib/xp/node';
+import {connect, multiRepoConnect} from '/lib/xp/node';
 
 
 //──────────────────────────────────────────────────────────────────────────────
@@ -58,7 +58,7 @@ export function get({params}) {
 	const sources = repoIds.map(repoId => ({
 		repoId,
 		branch: 'master', // NOTE Hardcoded
-		principals: []
+		principals: ['role:system.admin'] // TODO Remove hardcode?
 	}));
 	const multiRepoConnection = multiRepoConnect({sources});
 
@@ -78,6 +78,22 @@ export function get({params}) {
 		query,
 		repoIds,
 		total: res.total,
-		hits: res.hits
+		hits: res.hits.map(({
+			id, score, repoId, branch
+		}) => {
+			const repoConnection = connect({
+				repoId,
+				branch,
+				principals: ['role:system.admin'] // TODO Remove hardcode?
+			});
+			const node = repoConnection.get(id); log.info(toStr({node}));
+			return {
+				id,
+				score,
+				repoId,
+				branch,
+				node
+			};
+		})
 	});
 }
