@@ -62,8 +62,17 @@ export function get({params}) {
 	}));
 	const multiRepoConnection = multiRepoConnect({sources});
 
-	const res = multiRepoConnection.query(queryParams); log.info(toStr({res}));
-	const pages = Math.ceil(res.total / count); log.info(toStr({pages}));
+	const queryRes = multiRepoConnection.query(queryParams); log.info(toStr({queryRes}));
+	const pages = Math.ceil(queryRes.total / count); log.info(toStr({pages}));
+
+	/*const resultMappings = forceArray(data.resultMappings).map(({conditionId, doBreak = false, mappings}) => {
+		const conditionContent = getContentByKey({key: conditionId}); log.info(toStr({conditionContent}));
+		return {
+			condition: conditionContent.data,
+			doBreak,
+			mappings
+		};
+	}); log.info(toStr({resultMappings}));*/
 
 	return jsonResponse({
 		params: {
@@ -73,12 +82,12 @@ export function get({params}) {
 			searchString,
 			start
 		},
-		count: res.count,
+		count: queryRes.count,
 		pages,
 		query,
 		repoIds,
-		total: res.total,
-		hits: res.hits.map(({
+		total: queryRes.total,
+		hits: queryRes.hits.map(({
 			id, score, repoId, branch
 		}) => {
 			const repoConnection = connect({
@@ -86,14 +95,20 @@ export function get({params}) {
 				branch,
 				principals: ['role:system.admin'] // TODO Remove hardcode?
 			});
-			const node = repoConnection.get(id); log.info(toStr({node}));
-			return {
+			const node = repoConnection.get(id); //log.info(toStr({node}));
+			const hit = {
 				id,
 				score,
 				repoId,
 				branch,
 				node
 			};
+			/*for (let i = 0; i < resultMappings.length; i += 1) {
+				const {field, operator, value = null} = resultMappings[i].condition;
+				//resultMappings[i].mappings
+				//if (doBreak) { break; }
+			}*/
+			return hit;
 		})
 	});
 }

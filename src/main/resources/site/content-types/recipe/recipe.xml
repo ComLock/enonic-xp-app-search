@@ -6,28 +6,81 @@
 	<is-final>true</is-final>
 	<allow-child-content>true</allow-child-content>
 	<form>
-		<input name="repoIds" type="CustomSelector">
-			<label>Repo</label>
-			<occurrences minimum="1" maximum="0"/>
-			<config>
-				<service>repoSelector</service>
-			</config>
-		</input>
+		<field-set name="sourcesFieldSet">
+			<label>Sources</label>
+			<items>
+				<input name="repoIds" type="CustomSelector">
+					<label>Repo</label>
+					<occurrences minimum="1" maximum="0"/>
+					<config>
+						<service>repoSelector</service>
+					</config>
+				</input>
+			</items>
+		</field-set>
 
-		<input name="expressionId" type="ContentSelector">
-			<label>Expression</label>
-			<occurrences minimum="0" maximum="1"/>
-			<config>
-				<relationshipType>system:reference</relationshipType>
-				<allowContentType>expression</allowContentType>
-				<allowContentType>fulltext</allowContentType>
-				<allowContentType>group</allowContentType>
-				<allowContentType>ngram</allowContentType>
-				<allowPath>${site}</allowPath>
-				<treeMode>false</treeMode>
-				<showStatus>false</showStatus>
-				<hideToggleIcon>false</hideToggleIcon>
-			</config>
-		</input>
+		<field-set name="queryFieldSet">
+			<label>Query</label>
+			<items>
+				<input name="expressionId" type="ContentSelector">
+					<label>Expression</label>
+					<occurrences minimum="0" maximum="1"/>
+					<config>
+						<relationshipType>system:reference</relationshipType>
+						<allowContentType>expression</allowContentType>
+						<allowContentType>fulltext</allowContentType>
+						<allowContentType>group</allowContentType>
+						<allowContentType>ngram</allowContentType>
+						<allowPath>${site}</allowPath>
+						<treeMode>false</treeMode>
+						<showStatus>false</showStatus>
+						<hideToggleIcon>false</hideToggleIcon>
+					</config>
+				</input>
+			</items>
+		</field-set>
+
+		<field-set name="resultMappingFieldSet">
+			<label>Result mapping(s)</label>
+			<items>
+				<item-set name="resultMappings">
+					<label>Result mapping</label>
+					<occurrences minimum="1" maximum="0"/>
+					<items>
+						<input name="conditionId" type="ContentSelector">
+							<label>Condition</label>
+							<occurrences minimum="0" maximum="1"/>
+							<config>
+								<relationshipType>system:reference</relationshipType>
+								<allowContentType>condition</allowContentType>
+								<allowPath>${site}</allowPath>
+								<treeMode>false</treeMode>
+								<showStatus>false</showStatus>
+								<hideToggleIcon>false</hideToggleIcon>
+							</config>
+						</input>
+						<item-set name="mappings">
+							<label>Mapping</label>
+							<occurrences minimum="1" maximum="0"/>
+							<items>
+								<input name="source" type="TextLine">
+									<label>Source field</label>
+									<occurrences minimum="1" maximum="1"/>
+								</input>
+								<input name="target" type="TextLine">
+									<label>Target field</label>
+									<occurrences minimum="1" maximum="1"/>
+								</input>
+							</items>
+						</item-set>
+						<input name="doBreak" type="CheckBox">
+							<label>Break on condition</label>
+							<occurrences minimum="0" maximum="1"/>
+							<default>unchecked</default>
+						</input>
+					</items>
+				</item-set>
+			</items>
+		</field-set>
 	</form>
 </content-type>

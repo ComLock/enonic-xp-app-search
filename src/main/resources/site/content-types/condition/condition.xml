@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<content-type>
+	<display-name>Condition</display-name>
+	<super-type>base:structured</super-type>
+	<is-abstract>false</is-abstract>
+	<is-final>true</is-final>
+	<allow-child-content>true</allow-child-content>
+	<form>
+
+		<input name="field" type="TextLine">
+			<label>Field</label>
+			<occurrences minimum="1" maximum="1"/>
+		</input>
+
+		<input name="operator" type="RadioButton">
+			<label>Operator</label>
+			<occurrences minimum="1" maximum="1"/>
+			<config>
+				<option value="eq">Equals (default)</option>
+				<option value="ne">Not equals</option>
+				<option value="gt">Greather than</option>
+				<option value="gte">Greather than or equals</option>
+				<option value="lt">Less than</option>
+				<option value="lte">Less than or equals</option>
+				<option value="in">Includes</option><!-- array and string -->
+				<option value="startsWith">Starts with</option>
+				<option value="endsWith">Ends with</option>
+			</config>
+			<default>eq</default>
+		</input>
+
+		<input name="value" type="TextLine">
+			<label>Value</label>
+			<occurrences minimum="0" maximum="1"/>
+		</input>
+
+	</form>
+</content-type>
