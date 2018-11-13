@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<content-type>
+	<display-name>Ngram query function</display-name>
+	<super-type>base:structured</super-type>
+	<is-abstract>false</is-abstract>
+	<is-final>true</is-final>
+	<allow-child-content>true</allow-child-content>
+	<form>
+		<input name="fields" type="TextLine">
+			<label>Fields</label>
+			<occurrences minimum="1" maximum="0"/>
+		</input>
+
+		<input name="operator" type="RadioButton">
+			<label>Operator</label>
+			<occurrences minimum="0" maximum="0"/>
+			<config>
+				<option value="OR">OR (default)</option>
+				<option value="AND">AND</option>
+			</config>
+			<default>OR</default>
+		</input>
+	</form>
+</content-type>

@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<content-type>
+	<display-name>Query expression group</display-name>
+	<super-type>base:structured</super-type>
+	<is-abstract>false</is-abstract>
+	<is-final>true</is-final>
+	<allow-child-content>true</allow-child-content>
+	<form>
+		<input name="expressionIds" type="ContentSelector">
+			<label>Expression</label>
+			<occurrences minimum="2" maximum="0"/>
+			<config>
+				<relationshipType>system:reference</relationshipType>
+				<allowContentType>expression</allowContentType>
+				<allowContentType>fulltext</allowContentType>
+				<allowContentType>group</allowContentType>
+				<allowContentType>ngram</allowContentType>
+				<allowPath>${site}</allowPath>
+				<treeMode>false</treeMode>
+				<showStatus>false</showStatus>
+				<hideToggleIcon>false</hideToggleIcon>
+			</config>
+		</input>
+
+		<input name="operator" type="RadioButton">
+			<label>Operator</label>
+			<occurrences minimum="0" maximum="0"/>
+			<config>
+				<option value="OR">OR (default)</option>
+				<option value="AND">AND</option>
+			</config>
+			<default>OR</default>
+		</input>
+	</form>
+</content-type>

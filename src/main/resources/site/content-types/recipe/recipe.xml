@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<content-type>
+	<display-name>Search recipe</display-name>
+	<super-type>base:structured</super-type>
+	<is-abstract>false</is-abstract>
+	<is-final>true</is-final>
+	<allow-child-content>true</allow-child-content>
+	<form>
+		<input name="repoIds" type="CustomSelector">
+			<label>Repo</label>
+			<occurrences minimum="1" maximum="0"/>
+			<config>
+				<service>repoSelector</service>
+			</config>
+		</input>
+
+		<input name="expressionId" type="ContentSelector">
+			<label>Expression</label>
+			<occurrences minimum="0" maximum="1"/>
+			<config>
+				<relationshipType>system:reference</relationshipType>
+				<allowContentType>expression</allowContentType>
+				<allowContentType>fulltext</allowContentType>
+				<allowContentType>group</allowContentType>
+				<allowContentType>ngram</allowContentType>
+				<allowPath>${site}</allowPath>
+				<treeMode>false</treeMode>
+				<showStatus>false</showStatus>
+				<hideToggleIcon>false</hideToggleIcon>
+			</config>
+		</input>
+	</form>
+</content-type>
