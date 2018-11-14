@@ -16,7 +16,9 @@
 			<label>Operator</label>
 			<occurrences minimum="1" maximum="1"/>
 			<config>
-				<option value="eq">Equals (default)</option>
+				<option value="t">Truthy (default)</option>
+				<option value="f">Falsy</option>
+				<option value="eq">Equals</option>
 				<option value="ne">Not equals</option>
 				<option value="gt">Greather than</option>
 				<option value="gte">Greather than or equals</option>
@@ -26,7 +28,7 @@
 				<option value="startsWith">Starts with</option>
 				<option value="endsWith">Ends with</option>
 			</config>
-			<default>eq</default>
+			<default>t</default>
 		</input>
 
 		<input name="value" type="TextLine">

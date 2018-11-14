@@ -1,8 +1,15 @@
 //──────────────────────────────────────────────────────────────────────────────
+// Node modules (webpacked)
+//──────────────────────────────────────────────────────────────────────────────
+import set from 'set-value';
+
+
+//──────────────────────────────────────────────────────────────────────────────
 // Enonic XP libs (externals not webpacked)
 //──────────────────────────────────────────────────────────────────────────────
 import {toStr} from '/lib/enonic/util';
 import {forceArray} from '/lib/enonic/util/data';
+import {dlv} from '/lib/enonic/util/object';
 import {get as getContentByKey} from '/lib/xp/content';
 import {connect, multiRepoConnect} from '/lib/xp/node';
 
@@ -65,14 +72,14 @@ export function get({params}) {
 	const queryRes = multiRepoConnection.query(queryParams); log.info(toStr({queryRes}));
 	const pages = Math.ceil(queryRes.total / count); log.info(toStr({pages}));
 
-	/*const resultMappings = forceArray(data.resultMappings).map(({conditionId, doBreak = false, mappings}) => {
+	const resultMappings = forceArray(data.resultMappings).map(({conditionId, doBreak = false, mappings}) => {
 		const conditionContent = getContentByKey({key: conditionId}); log.info(toStr({conditionContent}));
 		return {
 			condition: conditionContent.data,
 			doBreak,
-			mappings
+			mappings: forceArray(mappings)
 		};
-	}); log.info(toStr({resultMappings}));*/
+	}); log.info(toStr({resultMappings}));
 
 	return jsonResponse({
 		params: {
@@ -103,12 +110,32 @@ export function get({params}) {
 				branch,
 				node
 			};
-			/*for (let i = 0; i < resultMappings.length; i += 1) {
-				const {field, operator, value = null} = resultMappings[i].condition;
-				//resultMappings[i].mappings
-				//if (doBreak) { break; }
-			}*/
-			return hit;
+			const mapped = {};
+			for (let i = 0; i < resultMappings.length; i += 1) {
+				const {field, operator, value} = resultMappings[i].condition;
+				log.info(toStr({field, operator, value}));
+				const actual = dlv(hit, field); log.info(toStr({actual}));
+				let truthy = false;
+				switch (operator) {
+				case 'eq': truthy = actual == value; break; // eslint-disable-line eqeqeq
+				case 'f': truthy = !actual; break;
+				case 'ne': truthy = actual != value; break; // eslint-disable-line eqeqeq
+				case 't': truthy = actual; break;
+				default: {
+					const msg = `Unknown operator:${operator}!`;
+					log.error(msg);
+					throw new Error(msg);
+				}
+				} // switch
+				log.info(toStr({truthy}));
+				if (truthy) {
+					resultMappings[i].mappings.forEach((mapping) => {
+						set(mapped, mapping.target, dlv(hit, mapping.source));
+					});
+				}
+				if (resultMappings[i].doBreak) { break; }
+			}
+			return mapped;
 		})
 	});
 }
