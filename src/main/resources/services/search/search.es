@@ -2,6 +2,7 @@
 // Node modules (webpacked)
 //──────────────────────────────────────────────────────────────────────────────
 import set from 'set-value';
+import {findAll} from 'highlight-words-core';
 
 
 //──────────────────────────────────────────────────────────────────────────────
@@ -130,7 +131,17 @@ export function get({params}) {
 				log.info(toStr({truthy}));
 				if (truthy) {
 					resultMappings[i].mappings.forEach((mapping) => {
-						set(mapped, mapping.target, dlv(hit, mapping.source));
+						const textToHighlight = dlv(hit, mapping.source);
+						set(mapped, mapping.target, mapping.highlight ? findAll({
+							searchWords: searchString.split(' '),
+							textToHighlight
+						}).map(({end, highlight, start: s}) => {
+							const text = textToHighlight.substr(s, end - s);
+							if (highlight) {
+								return `<b>${text}</b>`;
+							}
+							return text;
+						}).join('') : textToHighlight);
 					});
 				}
 				if (resultMappings[i].doBreak) { break; }

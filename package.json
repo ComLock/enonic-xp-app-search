@@ -1,6 +1,8 @@
 {
   "author": "Christian Andreas Westgaard <comlock@gmail.com>",
-  "dependencies": {},
+  "dependencies": {
+    "highlight-words-core": "^1.2.2"
+  },
   "devDependencies": {
     "@babel/core": "^7.1.5",
     "@babel/plugin-proposal-object-rest-spread": "^7.0.0",
