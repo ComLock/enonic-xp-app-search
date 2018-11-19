@@ -8,7 +8,7 @@ import highlightSearchResult from 'highlight-search-result';
 //──────────────────────────────────────────────────────────────────────────────
 // Enonic XP libs (externals not webpacked)
 //──────────────────────────────────────────────────────────────────────────────
-import {toStr} from '/lib/enonic/util';
+//import {toStr} from '/lib/enonic/util';
 import {forceArray} from '/lib/enonic/util/data';
 //import {isNotSet} from '/lib/enonic/util/value';
 import {dlv} from '/lib/enonic/util/object';
@@ -28,24 +28,24 @@ import {jsonResponse} from '/lib/appSearch/jsonResponse';
 // Public function
 //──────────────────────────────────────────────────────────────────────────────
 export function get({params}) {
-	log.info(toStr({params}));
-	let {page = 1} = params; // NOTE First index is 1 not 0
+	//log.info(toStr({params}));
+	let page = params.page ? parseInt(params.page, 10) : 1; // NOTE First index is 1 not 0
+	const count = params.count ? parseInt(params.count, 10) : 10;
+	const start = params.count ? parseInt(params.start, 10) : (page - 1) * count; // NOTE First index is 0 not 1
 	const {
-		count = 10,
 		recipeId,
-		searchString = '',
-		start = (page - 1) * count // NOTE First index is 0 not 1
+		searchString = ''
 	} = params;
-	log.info(toStr({
+	/*log.info(toStr({
 		count,
 		page,
 		recipeId,
 		start
-	}));
+	}));*/
 	if (!page) { page = Math.floor(start / count) + 1; }
 	if (!recipeId) { return jsonError('Required param recipeId missing!'); }
 
-	const recipeContent = getContentByKey({key: recipeId}); log.info(toStr({recipeContent}));
+	const recipeContent = getContentByKey({key: recipeId}); //log.info(toStr({recipeContent}));
 	if (!recipeContent) { return jsonError(`Unable to find recipe with id:${recipeId}!`); }
 
 	const {data} = recipeContent;
@@ -53,17 +53,16 @@ export function get({params}) {
 	//if (!expressionId) { return jsonError(`Recipe with id:${recipeId} is missing required param data.expressionId!`); }
 
 	// Allowing empty query:
-	const query = expressionId ? buildQuery({expressionId, searchString}) : ''; log.info(toStr({query}));
+	const query = expressionId ? buildQuery({expressionId, searchString}) : ''; //log.info(toStr({query}));
 	const queryParams = {
 		//aggregations,
 		count,
 		//filter,
 		query,
 		start
-	};
-	log.info(toStr({queryParams}));
+	}; //log.info(toStr({queryParams}));
 
-	const repoIds = forceArray(data.repoIds); log.info(toStr({repoIds}));
+	const repoIds = forceArray(data.repoIds); //log.info(toStr({repoIds}));
 	const sources = repoIds.map(repoId => ({
 		repoId,
 		branch: 'master', // NOTE Hardcoded
@@ -71,17 +70,17 @@ export function get({params}) {
 	}));
 	const multiRepoConnection = multiRepoConnect({sources});
 
-	const queryRes = multiRepoConnection.query(queryParams); log.info(toStr({queryRes}));
-	const pages = Math.ceil(queryRes.total / count); log.info(toStr({pages}));
+	const queryRes = multiRepoConnection.query(queryParams); //log.info(toStr({queryRes}));
+	const pages = Math.ceil(queryRes.total / count); //log.info(toStr({pages}));
 
 	const resultMappings = forceArray(data.resultMappings).map(({conditionId, doBreak = false, mappings}) => {
-		const conditionContent = getContentByKey({key: conditionId}); log.info(toStr({conditionContent}));
+		const conditionContent = getContentByKey({key: conditionId}); //log.info(toStr({conditionContent}));
 		return {
 			condition: conditionContent.data,
 			doBreak,
 			mappings: forceArray(mappings)
 		};
-	}); log.info(toStr({resultMappings}));
+	}); //log.info(toStr({resultMappings}));
 
 	return jsonResponse({
 		params: {
@@ -115,8 +114,8 @@ export function get({params}) {
 			const mapped = {};
 			for (let i = 0; i < resultMappings.length; i += 1) {
 				const {field, operator, value} = resultMappings[i].condition;
-				log.info(toStr({field, operator, value}));
-				const actual = dlv(hit, field); log.info(toStr({actual}));
+				//log.info(toStr({field, operator, value}));
+				const actual = dlv(hit, field); //log.info(toStr({actual}));
 				let truthy = false;
 				switch (operator) {
 				case 'eq': truthy = actual == value; break; // eslint-disable-line eqeqeq
@@ -129,7 +128,7 @@ export function get({params}) {
 					throw new Error(msg);
 				}
 				} // switch
-				log.info(toStr({truthy}));
+				//log.info(toStr({truthy}));
 				if (truthy) {
 					resultMappings[i].mappings.forEach(({
 						highlight, lengthLimit, source, target

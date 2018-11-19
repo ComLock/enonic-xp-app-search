@@ -1,7 +1,7 @@
 //──────────────────────────────────────────────────────────────────────────────
 // Enonic XP libs (externals not webpacked)
 //──────────────────────────────────────────────────────────────────────────────
-import {toStr} from '/lib/enonic/util';
+//import {toStr} from '/lib/enonic/util';
 import {forceArray} from '/lib/enonic/util/data';
 import {get as getContentByKey} from '/lib/xp/content';
 
@@ -53,7 +53,7 @@ function ngram({
 // Public function
 //──────────────────────────────────────────────────────────────────────────────
 export function buildQuery({expressionId, searchString}) {
-	const expressionContent = getContentByKey({key: expressionId}); log.info(toStr({expressionContent}));
+	const expressionContent = getContentByKey({key: expressionId}); //log.info(toStr({expressionContent}));
 	const {data, type} = expressionContent;
 	let query = '';
 	switch (type) {
