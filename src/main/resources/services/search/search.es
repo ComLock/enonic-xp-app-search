@@ -2,7 +2,7 @@
 // Node modules (webpacked)
 //──────────────────────────────────────────────────────────────────────────────
 import set from 'set-value';
-import {findAll} from 'highlight-words-core';
+import highlightSearchResult from 'highlight-search-result';
 
 
 //──────────────────────────────────────────────────────────────────────────────
@@ -10,6 +10,7 @@ import {findAll} from 'highlight-words-core';
 //──────────────────────────────────────────────────────────────────────────────
 import {toStr} from '/lib/enonic/util';
 import {forceArray} from '/lib/enonic/util/data';
+//import {isNotSet} from '/lib/enonic/util/value';
 import {dlv} from '/lib/enonic/util/object';
 import {get as getContentByKey} from '/lib/xp/content';
 import {connect, multiRepoConnect} from '/lib/xp/node';
@@ -130,18 +131,19 @@ export function get({params}) {
 				} // switch
 				log.info(toStr({truthy}));
 				if (truthy) {
-					resultMappings[i].mappings.forEach((mapping) => {
-						const textToHighlight = dlv(hit, mapping.source);
-						set(mapped, mapping.target, mapping.highlight ? findAll({
-							searchWords: searchString.split(' '),
-							textToHighlight
-						}).map(({end, highlight, start: s}) => {
-							const text = textToHighlight.substr(s, end - s);
-							if (highlight) {
-								return `<b>${text}</b>`;
-							}
-							return text;
-						}).join('') : textToHighlight);
+					resultMappings[i].mappings.forEach(({
+						highlight, lengthLimit, source, target
+					}) => {
+						const textToHighlight = dlv(hit, source);
+						let v;
+						if (highlight) {
+							v = highlightSearchResult(textToHighlight, searchString, lengthLimit || textToHighlight.length, str => `<b>${str}</b>`);
+						} else {
+							v = lengthLimit
+								? textToHighlight.substring(0, lengthLimit)
+								: textToHighlight;
+						}
+						set(mapped, target, v);
 					});
 				}
 				if (resultMappings[i].doBreak) { break; }

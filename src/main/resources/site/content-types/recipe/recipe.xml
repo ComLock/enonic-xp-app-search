@@ -75,6 +75,10 @@
 									<label>Highlight?</label>
 									<default>unchecked</default>
 								</input>
+								<input name="lengthLimit" type="Long">
+									<label>Limit length to</label>
+									<occurrences minimum="0" maximum="1"/>
+								</input>
 							</items>
 						</item-set>
 						<input name="doBreak" type="CheckBox">

@@ -1,7 +1,7 @@
 {
   "author": "Christian Andreas Westgaard <comlock@gmail.com>",
   "dependencies": {
-    "highlight-words-core": "^1.2.2"
+    "highlight-search-result": "^1.0.4"
   },
   "devDependencies": {
     "@babel/core": "^7.1.5",
