@@ -19,6 +19,7 @@ import {connect, multiRepoConnect} from '/lib/xp/node';
 //──────────────────────────────────────────────────────────────────────────────
 // Local libs (Absolute path without extension so it doesn't get webpacked)
 //──────────────────────────────────────────────────────────────────────────────
+import {Aggregations} from '/lib/appSearch/Aggregations';
 import {buildQuery} from '/lib/appSearch/buildQuery';
 import {jsonError} from '/lib/appSearch/jsonError';
 import {jsonResponse} from '/lib/appSearch/jsonResponse';
@@ -54,8 +55,9 @@ export function get({params}) {
 
 	// Allowing empty query:
 	const query = expressionId ? buildQuery({expressionId, searchString}) : ''; //log.info(toStr({query}));
+	const aggregationsObj = new Aggregations(data.aggregationIds);
 	const queryParams = {
-		//aggregations,
+		aggregations: aggregationsObj.buildExpression(),
 		count,
 		//filter,
 		query,
@@ -94,6 +96,7 @@ export function get({params}) {
 		pages,
 		query,
 		repoIds,
+		aggregations: aggregationsObj.handleResult(queryRes.aggregations),
 		total: queryRes.total,
 		hits: queryRes.hits.map(({
 			id, score, repoId, branch

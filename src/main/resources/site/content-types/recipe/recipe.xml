@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <content-type>
 	<display-name>Search recipe</display-name>
 	<super-type>base:structured</super-type>
@@ -37,6 +37,13 @@
 						<hideToggleIcon>false</hideToggleIcon>
 					</config>
 				</input>
+			</items>
+		</field-set>
+
+		<field-set name="aggregationsFieldSet">
+			<label>Aggregation(s)</label>
+			<items>
+				<inline mixin="aggregationsSelector"/>
 			</items>
 		</field-set>
 

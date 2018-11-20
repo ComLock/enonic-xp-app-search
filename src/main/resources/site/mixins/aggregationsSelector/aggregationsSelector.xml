@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<mixin>
+	<display-name>Aggregations selector</display-name>
+	<items>
+		<input name="aggregationIds" type="ContentSelector">
+			<label>Aggregation(s)</label>
+			<occurrences minimum="0" maximum="0"/>
+			<config>
+				<relationshipType>system:reference</relationshipType>
+				<allowContentType>aggregationTerms</allowContentType>
+				<allowPath>${site}</allowPath>
+				<treeMode>false</treeMode>
+				<showStatus>false</showStatus>
+				<hideToggleIcon>false</hideToggleIcon>
+			</config>
+		</input>
+	</items>
+</mixin>

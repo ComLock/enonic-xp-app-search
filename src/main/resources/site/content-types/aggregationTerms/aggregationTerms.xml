@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<content-type>
+	<display-name>Terms aggregation</display-name>
+	<super-type>base:structured</super-type>
+	<is-abstract>false</is-abstract>
+	<is-final>true</is-final>
+	<allow-child-content>true</allow-child-content>
+	<form>
+
+		<input name="field" type="TextLine">
+			<label>Field</label>
+			<occurrences minimum="1" maximum="1"/>
+		</input>
+
+		<input name="orderType" type="RadioButton">
+			<label>Order type</label>
+			<occurrences minimum="1" maximum="1"/>
+			<config>
+				<option value="_term">Alphabetic ordering of bucket keys. (default)</option>
+				<option value="_count">Numeric ordering of number of document in buckets.</option>
+			</config>
+			<default>_term</default>
+		</input>
+
+
+		<input name="orderDirection" type="RadioButton">
+			<label>Order direction</label>
+			<occurrences minimum="1" maximum="1"/>
+			<config>
+				<option value="ASC">Ascdending (default)</option>
+				<option value="DESC">Descending</option>
+			</config>
+			<default>ASC</default>
+		</input>
+
+		<input name="size" type="Long">
+			<label>Size</label>
+			<occurrences minimum="0" maximum="1"/>
+			<default>10</default>
+		</input>
+
+		<field-set name="mappingsFieldSet">
+			<label>Mapping(s)</label>
+			<items>
+				<option-set name="bucketType">
+					<label>Bucket type</label>
+					<help-text>You can select up to 2 options</help-text>
+					<expanded>false</expanded>
+					<occurrences minimum="0" maximum="1"/>
+					<options minimum="0" maximum="1">
+						<option name="content">
+							<label>Content</label>
+							<items>
+								<item-set name="mappings">
+									<label>Mapping</label>
+									<occurrences minimum="1" maximum="0"/>
+									<items>
+										<input name="source" type="TextLine">
+											<label>Source</label>
+											<occurrences minimum="1" maximum="1"/>
+										</input>
+										<input name="target" type="TextLine">
+											<label>Target field</label>
+											<occurrences minimum="1" maximum="1"/>
+										</input>
+									</items>
+								</item-set>
+							</items>
+						</option><!-- isContent -->
+					</options>
+				</option-set><!-- bucketType -->
+			</items>
+		</field-set><!-- mappingsFieldSet -->
+
+		<field-set name="subAggregationsFieldSet">
+			<label>Sub aggregation(s)</label>
+			<items>
+				<inline mixin="aggregationsSelector"/>
+			</items>
+		</field-set>
+
+	</form>
+</content-type>
