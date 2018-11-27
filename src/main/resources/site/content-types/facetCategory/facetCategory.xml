@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<content-type>
+	<display-name>Facet category</display-name>
+	<super-type>base:structured</super-type>
+	<is-abstract>false</is-abstract>
+	<is-final>true</is-final>
+	<allow-child-content>true</allow-child-content>
+	<form>
+		<input name="filterIds" type="ContentSelector">
+			<label>Filter(s)</label>
+			<occurrences minimum="1" maximum="0"/>
+			<config>
+				<relationshipType>system:reference</relationshipType>
+				<allowContentType>facet</allowContentType>
+				<allowPath>${site}</allowPath>
+				<treeMode>false</treeMode>
+				<showStatus>false</showStatus>
+				<hideToggleIcon>false</hideToggleIcon>
+			</config>
+		</input>
+	</form>
+</content-type>

@@ -96,7 +96,7 @@ const SERVER_JS_CONFIG = {
 	context,
 	entry: SERVER_JS_ENTRY,
 	externals: [
-		/\/lib\/(enonic|xp)/
+		/^\//
 	],
 	devtool: false, // Don't waste time generating sourceMaps
 	mode: 'production',

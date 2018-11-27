@@ -20,6 +20,7 @@ import {connect, multiRepoConnect} from '/lib/xp/node';
 // Local libs (Absolute path without extension so it doesn't get webpacked)
 //──────────────────────────────────────────────────────────────────────────────
 import {Aggregations} from '/lib/appSearch/Aggregations';
+import {buildPagination} from '/lib/appSearch/buildPagination';
 import {buildQuery} from '/lib/appSearch/buildQuery';
 import {jsonError} from '/lib/appSearch/jsonError';
 import {jsonResponse} from '/lib/appSearch/jsonResponse';
@@ -34,6 +35,8 @@ export function get({params}) {
 	const count = params.count ? parseInt(params.count, 10) : 10;
 	const start = params.count ? parseInt(params.start, 10) : (page - 1) * count; // NOTE First index is 0 not 1
 	const {
+		locale = 'en',
+		name = 'q',
 		recipeId,
 		searchString = ''
 	} = params;
@@ -50,12 +53,12 @@ export function get({params}) {
 	if (!recipeContent) { return jsonError(`Unable to find recipe with id:${recipeId}!`); }
 
 	const {data} = recipeContent;
-	const {expressionId} = data;
+	const {aggregationIds, expressionId, pagination: paginationOptionSet} = data;
 	//if (!expressionId) { return jsonError(`Recipe with id:${recipeId} is missing required param data.expressionId!`); }
 
 	// Allowing empty query:
 	const query = expressionId ? buildQuery({expressionId, searchString}) : ''; //log.info(toStr({query}));
-	const aggregationsObj = new Aggregations(data.aggregationIds);
+	const aggregationsObj = new Aggregations(aggregationIds);
 	const queryParams = {
 		aggregations: aggregationsObj.buildExpression(),
 		count,
@@ -74,6 +77,15 @@ export function get({params}) {
 
 	const queryRes = multiRepoConnection.query(queryParams); //log.info(toStr({queryRes}));
 	const pages = Math.ceil(queryRes.total / count); //log.info(toStr({pages}));
+
+	const pagination = buildPagination({
+		optionSet: paginationOptionSet,
+		locale,
+		name,
+		searchString,
+		page,
+		pages
+	});
 
 	const resultMappings = forceArray(data.resultMappings).map(({conditionId, doBreak = false, mappings}) => {
 		const conditionContent = getContentByKey({key: conditionId}); //log.info(toStr({conditionContent}));
@@ -94,6 +106,7 @@ export function get({params}) {
 		},
 		count: queryRes.count,
 		pages,
+		pagination,
 		query,
 		repoIds,
 		aggregations: aggregationsObj.handleResult(queryRes.aggregations),

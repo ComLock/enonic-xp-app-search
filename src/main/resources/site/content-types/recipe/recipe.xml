@@ -40,10 +40,69 @@
 			</items>
 		</field-set>
 
-		<field-set name="aggregationsFieldSet">
+		<field-set name="paginationFieldSet">
+			<label>Pagination</label>
+			<items>
+				<option-set name="pagination">
+					<label>Pagination</label>
+					<help-text></help-text>
+					<expanded>false</expanded>
+					<occurrences minimum="1" maximum="1"/>
+					<options minimum="0" maximum="1">
+						<option name="static">
+							<label>Static pagination</label>
+							<items>
+								<input name="pagesToShow" type="Long">
+									<label>Pages to show</label>
+									<help-text>How many pages to show</help-text>
+									<occurrences minimum="0" maximum="1"/>
+									<default>10</default>
+								</input>
+								<input name="first" type="CheckBox">
+									<label>Provide first</label>
+									<default>checked</default>
+								</input>
+								<input name="prev" type="CheckBox">
+									<label>Provide previous</label>
+									<default>checked</default>
+								</input>
+								<input name="next" type="CheckBox">
+									<label>Provide next</label>
+									<default>checked</default>
+								</input>
+								<input name="last" type="CheckBox">
+									<label>Provide last</label>
+									<default>checked</default>
+								</input>
+							</items>
+						</option>
+					</options>
+				</option-set>
+			</items>
+		</field-set>
+
+		<!--field-set name="aggregationsFieldSet">
 			<label>Aggregation(s)</label>
 			<items>
 				<inline mixin="aggregationsSelector"/>
+			</items>
+		</field-set-->
+
+		<field-set name="facetsFieldSet">
+			<label>Facets</label>
+			<items>
+				<input name="facetCategoryIds" type="ContentSelector">
+					<label>Category(ies)</label>
+					<occurrences minimum="0" maximum="0"/>
+					<config>
+						<relationshipType>system:reference</relationshipType>
+						<allowContentType>facetCategory</allowContentType>
+						<allowPath>${site}</allowPath>
+						<treeMode>false</treeMode>
+						<showStatus>false</showStatus>
+						<hideToggleIcon>false</hideToggleIcon>
+					</config>
+				</input>
 			</items>
 		</field-set>
 

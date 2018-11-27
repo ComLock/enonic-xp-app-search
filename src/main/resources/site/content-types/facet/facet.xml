@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<content-type>
+	<display-name>Facet</display-name>
+	<super-type>base:structured</super-type>
+	<is-abstract>false</is-abstract>
+	<is-final>true</is-final>
+	<allow-child-content>true</allow-child-content>
+	<form>
+		<input name="fieldId" type="ContentSelector">
+			<label>Field</label>
+			<occurrences minimum="1" maximum="1"/>
+			<config>
+				<relationshipType>system:reference</relationshipType>
+				<allowContentType>field</allowContentType>
+				<allowPath>${site}</allowPath>
+				<treeMode>false</treeMode>
+				<showStatus>false</showStatus>
+				<hideToggleIcon>false</hideToggleIcon>
+			</config>
+		</input>
+
+		<option-set name="valueType">
+			<label>Value type</label>
+			<help-text>You can select up to 2 options</help-text>
+			<expanded>false</expanded>
+			<occurrences minimum="1" maximum="1"/>
+			<options minimum="1" maximum="1">
+
+				<option name="content">
+					<label>Content</label>
+					<items>
+						<input name="value" type="ContentSelector">
+							<label>Id</label>
+							<occurrences minimum="1" maximum="1"/>
+							<config>
+								<relationshipType>system:reference</relationshipType>
+								<!--allowPath>${site}</allowPath-->
+								<treeMode>false</treeMode>
+								<showStatus>false</showStatus>
+								<hideToggleIcon>false</hideToggleIcon>
+							</config>
+						</input>
+					</items>
+				</option>
+
+				<option name="string">
+					<label>String</label>
+					<items>
+						<input name="value" type="TextLine">
+							<label>Value</label>
+							<occurrences minimum="1" maximum="1"/>
+						</input>
+					</items>
+				</option>
+
+				<option name="long">
+					<label>Long</label>
+					<items>
+						<input name="value" type="long">
+							<label>Number</label>
+							<occurrences minimum="1" maximum="1"/>
+						</input>
+					</items>
+				</option>
+
+				<option name="boolean">
+					<label>Boolean</label>
+					<items>
+						<input name="value" type="CheckBox">
+							<label>True?</label>
+							<default>unchecked</default>
+						</input>
+					</items>
+				</option>
+
+				<option name="double">
+					<label>Double</label>
+					<items>
+						<input name="value" type="double">
+							<label>Number</label>
+							<occurrences minimum="1" maximum="1"/>
+						</input>
+					</items>
+				</option>
+
+				<!-- TODO Date, DateTime, GeoPoint, Image, Media, Time -->
+
+			</options>
+		</option-set><!-- valueType -->
+
+	</form>
+</content-type>
