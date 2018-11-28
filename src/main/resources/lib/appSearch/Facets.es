@@ -80,15 +80,20 @@ export class Facets {
 							//const {value} = facetContent.data.valueType[selectedValueType];
 							//log.info(toStr({value}));
 							const uri = new Uri();
+							const active = params.facetId && params.facetId.includes(facetId);
 							Object.entries(params).forEach(([k, v]) => {
-								uri.addQueryParam(k, v);
+								if (Array.isArray(v)) {
+									v.forEach(value => uri.addQueryParam(k, value));
+								} else {
+									uri.addQueryParam(k, v);
+								}
 							});
-							if (!uri.getQueryParamValues('facetId').includes(facetId)) {
+							if (!active) {
 								uri.addQueryParam('facetId', facetId);
 							}
 							return {
 								href: uri.toString(),
-								active: false,
+								active,
 								count: 0,
 								//id: facetId,
 								name: facetContent.displayName
