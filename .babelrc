@@ -1,6 +1,7 @@
 {
   "plugins": [
     "array-includes",
+	"transform-es2017-object-entries",
     "@babel/plugin-proposal-object-rest-spread",
     "@babel/plugin-transform-object-assign"
   ],
