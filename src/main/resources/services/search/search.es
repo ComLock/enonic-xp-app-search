@@ -19,7 +19,7 @@ import {connect, multiRepoConnect} from '/lib/xp/node';
 //──────────────────────────────────────────────────────────────────────────────
 // Local libs (Absolute path without extension so it doesn't get webpacked)
 //──────────────────────────────────────────────────────────────────────────────
-import {Aggregations} from '/lib/appSearch/Aggregations';
+//import {Aggregations} from '/lib/appSearch/Aggregations';
 import {buildPagination} from '/lib/appSearch/buildPagination';
 import {buildQuery} from '/lib/appSearch/buildQuery';
 import {jsonError} from '/lib/appSearch/jsonError';
@@ -53,14 +53,14 @@ export function get({params}) {
 	if (!recipeContent) { return jsonError(`Unable to find recipe with id:${recipeId}!`); }
 
 	const {data} = recipeContent;
-	const {aggregationIds, expressionId, pagination: paginationOptionSet} = data;
+	const {/*aggregationIds, */expressionId, pagination: paginationOptionSet} = data;
 	//if (!expressionId) { return jsonError(`Recipe with id:${recipeId} is missing required param data.expressionId!`); }
 
 	// Allowing empty query:
 	const query = expressionId ? buildQuery({expressionId, searchString}) : ''; //log.info(toStr({query}));
-	const aggregationsObj = new Aggregations(aggregationIds);
+	//const aggregationsObj = new Aggregations(aggregationIds);
 	const queryParams = {
-		aggregations: aggregationsObj.buildExpression(),
+		//aggregations: aggregationsObj.buildExpression(),
 		count,
 		//filter,
 		query,
@@ -109,7 +109,7 @@ export function get({params}) {
 		pagination,
 		query,
 		repoIds,
-		aggregations: aggregationsObj.handleResult(queryRes.aggregations),
+		//aggregations: aggregationsObj.handleResult(queryRes.aggregations),
 		total: queryRes.total,
 		hits: queryRes.hits.map(({
 			id, score, repoId, branch

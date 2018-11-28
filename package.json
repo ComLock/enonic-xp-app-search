@@ -1,6 +1,7 @@
 {
   "author": "Christian Andreas Westgaard <comlock@gmail.com>",
   "dependencies": {
+    "deepmerge": "^2.2.1",
     "highlight-search-result": "^1.0.4",
     "jsuri": "^1.3.1"
   },
