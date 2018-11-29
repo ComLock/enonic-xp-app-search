@@ -9,27 +9,27 @@ import set from 'set-value';
 //──────────────────────────────────────────────────────────────────────────────
 // Enonic XP libs (externals not webpacked)
 //──────────────────────────────────────────────────────────────────────────────
-import {toStr} from '/lib/enonic/util';
+//import {toStr} from '/lib/enonic/util';
 import {dlv} from '/lib/enonic/util/object';
 import {forceArray} from '/lib/enonic/util/data';
-import {get as getContentByKey} from '/lib/xp/content';
+
+
+//──────────────────────────────────────────────────────────────────────────────
+// Local libs (Absolute path without extension so it doesn't get webpacked)
+//──────────────────────────────────────────────────────────────────────────────
+import {cachedContent} from '/lib/appSearch/cachedContent';
+import {cachedQuery} from '/lib/appSearch/cachedQuery';
 
 
 //──────────────────────────────────────────────────────────────────────────────
 // Private function
 //──────────────────────────────────────────────────────────────────────────────
-function uriObjFromParams({params = {}/*, excludes = {}*/} = {}) {
+function uriObjFromParams(params) {
 	const uri = new Uri();
 	Object.entries(params).forEach(([k, v]) => {
 		if (Array.isArray(v)) {
-			v.forEach((value) => {
-				//if (!excludes.includes(value)) {
-				uri.addQueryParam(k, value);
-				//}
-			});
-		} else {
-			uri.addQueryParam(k, v);
-		}//if (!excludes.includes(v)) { uri.addQueryParam(k, v); }
+			v.forEach((value) => { uri.addQueryParam(k, value); });
+		} else { uri.addQueryParam(k, v); }
 	});
 	return uri;
 }
@@ -40,23 +40,24 @@ function uriObjFromParams({params = {}/*, excludes = {}*/} = {}) {
 //──────────────────────────────────────────────────────────────────────────────
 export class Facets {
 	constructor({
+		contentCache,
 		facetCategoryIds,
 		filters = {},
-		params,
 		multiRepoConnection,
-		query
+		params,
+		query,
+		queryCache
 	}) {
 		//log.info(toStr({facetCategoryIds}));
-		const privateFacetCategories = {};
-		this.contents = {};
-		const facetCategories = [];
+		this.facetCategories = {};
 		const hasValues = {};
 		if (facetCategoryIds) {
 			forceArray(facetCategoryIds).forEach((facetCategoryId) => {
-				const facetCategoryContent = getContentByKey({key: facetCategoryId});
+				const facetCategoryContent = cachedContent({cache: contentCache, key: facetCategoryId});
 				const facetCategoryName = facetCategoryContent.displayName;
-				privateFacetCategories[facetCategoryId] = {
+				this.facetCategories[facetCategoryId] = {
 					hasValues: {},
+					facets: {},
 					name: facetCategoryName,
 					paths: []
 				};
@@ -66,78 +67,65 @@ export class Facets {
 					throw new Error(msg);
 				}
 				//log.info(toStr({facetCategoryContent}));
-				//this.contents[key] = content;
 				const pathsInCategory = [];
 				if (facetCategoryContent.data.facetIds) {
 					const facetIds = forceArray(facetCategoryContent.data.facetIds);
 					const hasValuesInCategory = {};
-					facetCategories.push({
-						name: facetCategoryName,
-						facets: facetIds.map((facetId) => {
-							const facetContent = getContentByKey({key: facetId});
-							if (!facetContent) {
-								const msg = `Could not find facet with key:${facetId}`;
-								log.error(msg);
-								throw new Error(msg);
+					facetIds.forEach((facetId) => {
+						const facetContent = cachedContent({cache: contentCache, key: facetId});
+						if (!facetContent) {
+							const msg = `Could not find facet with key:${facetId}`;
+							log.error(msg);
+							throw new Error(msg);
+						}
+						//log.info(toStr({facetContent}));
+						const {
+							fieldId,
+							valueType: {
+								_selected: selectedValueType
 							}
-							//log.info(toStr({facetContent}));
-							//this.contents[facetId] = facetContent;
-							const {
-								fieldId,
-								valueType: {
-									_selected: selectedValueType
-								}
-							} = facetContent.data;
-							//log.info(toStr({fieldId, selectedValueType}));
-							if (!this.contents[fieldId]) {
-								const fieldContent = getContentByKey({key: fieldId});
-								if (!fieldContent) {
-									const msg = `Could not find field with key:${fieldId}`;
-									log.error(msg);
-									throw new Error(msg);
-								}
-								//log.info(toStr({fieldContent}));
-								this.contents[fieldId] = fieldContent;
-							}
-							const {path} = this.contents[fieldId].data; //log.info(toStr({path}));
-							if (!pathsInCategory.includes(path)) { pathsInCategory.push(path); }
-							const {value} = facetContent.data.valueType[selectedValueType]; //log.info(toStr({value}));
-							const facetUri = uriObjFromParams({params});
-							const active = params.facetId && params.facetId.includes(facetId);
-							if (active) {
-								//log.info(`facetId:${facetId} is active with path:${path} value:${value}`);
-								if (hasValuesInCategory[path]) {
-									hasValuesInCategory[path].push(value);
-								} else {
-									hasValuesInCategory[path] = [value];
-								}
-								if (hasValues[path]) {
-									hasValues[path].push(value);
-								} else {
-									hasValues[path] = [value];
-								}
+						} = facetContent.data;
+						//log.info(toStr({fieldId, selectedValueType}));
+						const {path} = cachedContent({cache: contentCache, key: fieldId}).data; //log.info(toStr({path}));
+						if (!pathsInCategory.includes(path)) { pathsInCategory.push(path); }
+						const {value} = facetContent.data.valueType[selectedValueType]; //log.info(toStr({value}));
+						const facetUri = uriObjFromParams(params);
+						const active = params.facetId && params.facetId.includes(facetId);
+						if (active) {
+							//log.info(`facetId:${facetId} is active with path:${path} value:${value}`);
+							if (hasValuesInCategory[path]) {
+								hasValuesInCategory[path].push(value);
 							} else {
-								facetUri.addQueryParam('facetId', facetId);
+								hasValuesInCategory[path] = [value];
 							}
-							return {
-								href: facetUri.toString(),
-								active,
-								name: facetContent.displayName
-							};
-						}) // map facetId
-					}); // facetCategories.push
-					privateFacetCategories[facetCategoryId].hasValues = hasValuesInCategory;
-					privateFacetCategories[facetCategoryId].paths = pathsInCategory;
+							if (hasValues[path]) {
+								hasValues[path].push(value);
+							} else {
+								hasValues[path] = [value];
+							}
+						} else {
+							facetUri.addQueryParam('facetId', facetId);
+						}
+						this.facetCategories[facetCategoryId].facets[facetId] = {
+							href: facetUri.toString(),
+							active,
+							name: facetContent.displayName,
+							path,
+							value
+						};
+					});
+					this.facetCategories[facetCategoryId].hasValues = hasValuesInCategory;
+					this.facetCategories[facetCategoryId].paths = pathsInCategory;
 				} // if facetIds
 			}); // forEach facetCategoryId
 		} // if facetCategoryIds
-		log.info(toStr({hasValues}));
-		const hasValueEntries = Object.entries(hasValues); log.info(toStr({hasValueEntries}));
+		//log.info(toStr({hasValues}));
+		const hasValueEntries = Object.entries(hasValues); //log.info(toStr({hasValueEntries}));
 		if (hasValueEntries.length && !dlv(filters, 'boolean.must')) {
 			set(filters, 'boolean.must', []);
 		}
 		hasValueEntries.forEach(([field, values]) => {
-			log.info(toStr({field, values}));
+			//log.info(toStr({field, values}));
 			filters.boolean.must.push({
 				hasValue: {
 					field,
@@ -146,8 +134,8 @@ export class Facets {
 			});
 		});
 		//log.info(toStr({filters}));
-		//log.info(toStr({privateFacetCategories}));
-		Object.entries(privateFacetCategories).forEach(([
+		//log.info(toStr({facetCategories: this.facetCategories}));
+		Object.entries(this.facetCategories).forEach(([
 			categoryId, //eslint-disable-line no-unused-vars
 			properties
 		]) => {
@@ -199,13 +187,42 @@ export class Facets {
 					count: 0,
 					filters: filtersExceptCategory,
 					query
-				}; log.info(toStr({queryParams}));
-				const queryRes = multiRepoConnection.query(queryParams); log.info(toStr({queryRes}));
+				}; //log.info(toStr({queryParams}));
+				const queryRes = cachedQuery({cache: queryCache, connection: multiRepoConnection, params: queryParams});
+				//log.info(toStr({queryRes}));
+				Object.entries(this.facetCategories[categoryId].facets).forEach(([facetId, {path, value}]) => {
+					//log.info(toStr({buckets: queryRes.aggregations[path].buckets}));
+					const filteredBuckets = queryRes.aggregations[path].buckets.filter(({key}) => key === value);
+					//log.info(toStr({filteredBuckets}));
+					if (filteredBuckets.length) {
+						this.facetCategories[categoryId].facets[facetId].count = filteredBuckets[0].docCount;
+					} else {
+						this.facetCategories[categoryId].facets[facetId].count = 0;
+					}
+				});
 			} // if properties.hasValues
 		});
-		log.info(toStr({facetCategories}));
+		//log.info(toStr({facetCategories: this.facetCategories}));
+		//log.info(toStr({facetCategories}));
 
 		//log.info(toStr({contents: this.contents}));
 		//log.info(toStr({this: this}));
 	} // constructor
+
+	getCategoriesArray() {
+		return Object.values(this.facetCategories).map(({facets,  name}) => ({
+			name,
+			facets: Object.values(facets).map(({
+				active,
+				count,
+				href,
+				name: facetName
+			}) => ({
+				active,
+				count,
+				href,
+				name: facetName
+			}))
+		}));
+	}
 } // class Facets

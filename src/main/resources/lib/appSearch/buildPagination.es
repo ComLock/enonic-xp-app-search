@@ -1,7 +1,7 @@
 //──────────────────────────────────────────────────────────────────────────────
 // Enonic XP libs (externals not webpacked)
 //──────────────────────────────────────────────────────────────────────────────
-import {toStr} from '/lib/enonic/util';
+//import {toStr} from '/lib/enonic/util';
 import {localize} from '/lib/xp/i18n';
 
 
@@ -70,6 +70,6 @@ export function buildPagination({
 			});
 		}
 	}
-	log.info(toStr({pagination}));
+	//log.info(toStr({pagination}));
 	return pagination;
 }
