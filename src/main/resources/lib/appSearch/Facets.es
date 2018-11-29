@@ -3,12 +3,14 @@
 //──────────────────────────────────────────────────────────────────────────────
 import merge from 'deepmerge';
 import Uri from 'jsuri';
+import set from 'set-value';
 
 
 //──────────────────────────────────────────────────────────────────────────────
 // Enonic XP libs (externals not webpacked)
 //──────────────────────────────────────────────────────────────────────────────
 import {toStr} from '/lib/enonic/util';
+import {dlv} from '/lib/enonic/util/object';
 import {forceArray} from '/lib/enonic/util/data';
 import {get as getContentByKey} from '/lib/xp/content';
 
@@ -39,11 +41,7 @@ function uriObjFromParams({params = {}/*, excludes = {}*/} = {}) {
 export class Facets {
 	constructor({
 		facetCategoryIds,
-		filters = {
-			boolean: {
-				must: []
-			}
-		},
+		filters = {},
 		params,
 		multiRepoConnection,
 		query
@@ -133,8 +131,13 @@ export class Facets {
 				} // if facetIds
 			}); // forEach facetCategoryId
 		} // if facetCategoryIds
-		//log.info(toStr({hasValues}));
-		Object.entries(hasValues).forEach(([field, values]) => {
+		log.info(toStr({hasValues}));
+		const hasValueEntries = Object.entries(hasValues); log.info(toStr({hasValueEntries}));
+		if (hasValueEntries.length && !dlv(filters, 'boolean.must')) {
+			set(filters, 'boolean.must', []);
+		}
+		hasValueEntries.forEach(([field, values]) => {
+			log.info(toStr({field, values}));
 			filters.boolean.must.push({
 				hasValue: {
 					field,
@@ -162,7 +165,17 @@ export class Facets {
 								//log.info(toStr({filteredValues}));
 								if (hasValue.values.length !== filteredValues.length) {
 									//log.info(`hasValue.values.length:${hasValue.values.length} !== filteredValues.length:${filteredValues.length}`);
-									filtersExceptCategory.boolean.must[i].hasValue.values = filteredValues;
+									if (filteredValues.length) {
+										filtersExceptCategory.boolean.must[i].hasValue.values = filteredValues;
+									} else {
+										delete filtersExceptCategory.boolean.must.splice(i, 1);
+										if (!filtersExceptCategory.boolean.must.length) {
+											delete filtersExceptCategory.boolean.must;
+											if (!Object.keys(filtersExceptCategory.boolean).length) {
+												delete filtersExceptCategory.boolean;
+											}
+										}
+									}
 								}
 							}
 						}
@@ -186,7 +199,7 @@ export class Facets {
 					count: 0,
 					filters: filtersExceptCategory,
 					query
-				}; //log.info(toStr({queryParams}));
+				}; log.info(toStr({queryParams}));
 				const queryRes = multiRepoConnection.query(queryParams); log.info(toStr({queryRes}));
 			} // if properties.hasValues
 		});

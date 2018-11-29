@@ -27,7 +27,7 @@ export function search({
 	recipeId = recipeContent ? recipeContent._id : params.recipeId
 }) {
 	//log.info(toStr({params}));
-	const searchString = params.q; // TODO Hardcode
+	const searchString = params.q || ''; // TODO Hardcode
 
 	// Returns the preferred locale based on the current HTTP request, or the server default locale if none is specified.
 	const locale = params.locale || getLocale(); //log.info(toStr({locale}));
@@ -43,7 +43,7 @@ export function search({
 	const {expressionId/*, pagination: paginationOptionSet*/} = data;
 
 	// Allowing empty query:
-	const query = expressionId ? buildQuery({expressionId, searchString}) : ''; //log.info(toStr({query}));
+	const query = expressionId && searchString ? buildQuery({expressionId, searchString}) : ''; log.info(toStr({query}));
 
 	const repoIds = forceArray(data.repoIds); //log.info(toStr({repoIds}));
 	const sources = repoIds.map(repoId => ({
@@ -53,11 +53,7 @@ export function search({
 	}));
 	const multiRepoConnection = multiRepoConnect({sources});
 
-	const filters = {
-		boolean: {
-			must: []
-		}
-	};
+	const filters = {};
 	const facetCategories = new Facets({
 		facetCategoryIds: recipeContent.data.facetCategoryIds,
 		filters,
