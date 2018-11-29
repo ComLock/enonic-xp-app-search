@@ -24,7 +24,6 @@ import {buildQuery} from '/lib/appSearch/buildQuery';
 import {cachedContent} from '/lib/appSearch/cachedContent';
 import {cachedQuery} from '/lib/appSearch/cachedQuery';
 import {Facets} from '/lib/appSearch/Facets';
-import {jsonResponse} from '/lib/appSearch/jsonResponse';
 
 
 //──────────────────────────────────────────────────────────────────────────────
@@ -53,7 +52,7 @@ export function search({
 	recipeId = recipeContent ? recipeContent._id : params.recipeId
 }) {
 	//log.info(toStr({params}));
-	const name = 'q';
+	const name = params.name || 'q';
 	const searchString = params[name] || ''; // TODO Hardcode
 
 	// Returns the preferred locale based on the current HTTP request, or the server default locale if none is specified.
@@ -130,7 +129,7 @@ export function search({
 		};
 	}); //log.info(toStr({resultMappings}));
 
-	return jsonResponse({
+	return {
 		params: {
 			count,
 			facetId: params.facetId || [],
@@ -202,5 +201,5 @@ export function search({
 			}
 			return mapped;
 		})
-	});
+	};
 } // function search
