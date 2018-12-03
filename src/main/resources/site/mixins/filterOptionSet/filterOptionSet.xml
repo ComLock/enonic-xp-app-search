@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<mixin>
+	<display-name>Filter option-set</display-name>
+	<items>
+		<option-set name="filter">
+			<label>Filter</label>
+			<help-text></help-text>
+			<expanded>false</expanded>
+			<occurrences minimum="1" maximum="0"/>
+			<options minimum="1" maximum="0">
+				<option name="exists">
+					<label>Exists</label>
+					<items>
+						<input name="field" type="TextLine">
+							<label>Field</label>
+							<occurrences minimum="1" maximum="1"/>
+						</input>
+					</items>
+				</option>
+
+				<option name="notExists">
+					<label>Not exists</label>
+					<items>
+						<input name="field" type="TextLine">
+							<label>Field</label>
+							<occurrences minimum="1" maximum="1"/>
+						</input>
+					</items>
+				</option>
+
+				<option name="hasValue">
+					<label>Has value</label>
+					<items>
+						<input name="field" type="TextLine">
+							<label>Field</label>
+							<occurrences minimum="1" maximum="1"/>
+						</input>
+						<input name="values" type="TextLine">
+							<label>Values</label>
+							<occurrences minimum="1" maximum="0"/>
+						</input>
+					</items>
+				</option>
+
+				<option name="ids">
+					<label>Ids</label>
+					<items>
+						<input name="contentIds" type="ContentSelector">
+							<label>Content(s)</label>
+							<occurrences minimum="1" maximum="0"/>
+							<config>
+								<relationshipType>system:reference</relationshipType>
+								<!--allowContentType></allowContentType-->
+								<allowPath>${site}</allowPath>
+								<treeMode>false</treeMode>
+								<showStatus>false</showStatus>
+								<hideToggleIcon>false</hideToggleIcon>
+							</config>
+						</input>
+					</items>
+				</option>
+
+			</options>
+		</option-set>
+	</items>
+</mixin>

@@ -19,6 +19,38 @@
 			</items>
 		</field-set>
 
+		<field-set name="filtersFieldSet">
+			<label>Filters</label>
+			<items>
+				<option-set name="filters">
+					<label>Filter(s)</label>
+					<help-text></help-text>
+					<expanded>false</expanded>
+					<occurrences minimum="1" maximum="1"/>
+					<options minimum="0" maximum="0">
+						<option name="must">
+							<label>Must</label>
+							<items>
+								<inline mixin="filterOptionSet"/>
+							</items>
+						</option>
+						<option name="mustNot">
+							<label>Must not</label>
+							<items>
+								<inline mixin="filterOptionSet"/>
+							</items>
+						</option>
+						<option name="should">
+							<label>Should</label>
+							<items>
+								<inline mixin="filterOptionSet"/>
+							</items>
+						</option>
+					</options>
+				</option-set>
+			</items>
+		</field-set>
+
 		<field-set name="queryFieldSet">
 			<label>Query</label>
 			<items>
