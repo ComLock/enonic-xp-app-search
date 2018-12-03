@@ -27,10 +27,15 @@ import {cachedQuery} from '/lib/appSearch/cachedQuery';
 function uriObjFromParams(params) {
 	const uri = new Uri();
 	Object.entries(params).forEach(([k, v]) => {
-		if (Array.isArray(v)) {
-			v.forEach((value) => { uri.addQueryParam(k, value); });
-		} else { uri.addQueryParam(k, v); }
+		if (!['name', 'page', 'recipeId', 'searchString'].includes(k)) {
+			if (Array.isArray(v)) {
+				v.forEach((value) => { uri.addQueryParam(k, value); });
+			} else { uri.addQueryParam(k, v); }
+		}
 	});
+	if (params.name && params.searchString) {
+		uri.addQueryParam(params.name, params.searchString);
+	}
 	return uri;
 }
 
@@ -56,8 +61,10 @@ export class Facets {
 				const facetCategoryContent = cachedContent({cache: contentCache, key: facetCategoryId});
 				const facetCategoryName = facetCategoryContent.displayName;
 				this.facetCategories[facetCategoryId] = {
+					activeCount: 0,
 					hasValues: {},
 					facets: {},
+					inactiveCount: 0,
 					name: facetCategoryName,
 					paths: []
 				};
@@ -90,8 +97,12 @@ export class Facets {
 						if (!pathsInCategory.includes(path)) { pathsInCategory.push(path); }
 						const {value} = facetContent.data.valueType[selectedValueType]; //log.info(toStr({value}));
 						const facetUri = uriObjFromParams(params);
-						const active = params.facetId && params.facetId.includes(facetId);
+						const active = !!params.facetId && params.facetId.includes(facetId);
+						facetUri.deleteQueryParam('facetId', facetId);
+						const removeHref = facetUri.toString();
+						facetUri.addQueryParam('facetId', facetId);
 						if (active) {
+							this.facetCategories[facetCategoryId].activeCount += 1;
 							//log.info(`facetId:${facetId} is active with path:${path} value:${value}`);
 							if (hasValuesInCategory[path]) {
 								hasValuesInCategory[path].push(value);
@@ -104,13 +115,14 @@ export class Facets {
 								hasValues[path] = [value];
 							}
 						} else {
-							facetUri.addQueryParam('facetId', facetId);
+							this.facetCategories[facetCategoryId].inactiveCount += 1;
 						}
 						this.facetCategories[facetCategoryId].facets[facetId] = {
-							href: facetUri.toString(),
 							active,
+							href: facetUri.toString(),
 							name: facetContent.displayName,
 							path,
+							removeHref,
 							value
 						};
 					});
@@ -210,18 +222,24 @@ export class Facets {
 	} // constructor
 
 	getCategoriesArray() {
-		return Object.values(this.facetCategories).map(({facets,  name}) => ({
+		return Object.values(this.facetCategories).map(({
+			activeCount, facets, inactiveCount, name
+		}) => ({
+			activeCount,
+			inactiveCount,
 			name,
 			facets: Object.values(facets).map(({
 				active,
 				count,
 				href,
-				name: facetName
+				name: facetName,
+				removeHref
 			}) => ({
 				active,
 				count,
 				href,
-				name: facetName
+				name: facetName,
+				removeHref
 			}))
 		}));
 	}
