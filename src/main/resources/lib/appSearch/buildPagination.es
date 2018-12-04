@@ -2,6 +2,7 @@
 // Enonic XP libs (externals not webpacked)
 //──────────────────────────────────────────────────────────────────────────────
 //import {toStr} from '/lib/enonic/util';
+import {forceArray} from '/lib/enonic/util/data';
 import {localize} from '/lib/xp/i18n';
 
 
@@ -9,6 +10,7 @@ import {localize} from '/lib/xp/i18n';
 // Public function
 //──────────────────────────────────────────────────────────────────────────────
 export function buildPagination({
+	facetId,
 	optionSet,
 	locale,
 	name, // name of url query parameter that contains the searchString
@@ -16,6 +18,8 @@ export function buildPagination({
 	page,
 	pages
 }) {
+	const postfix = forceArray(facetId).map(f => `&facetId=${f}`).join('');
+	const href = `?${name}=${searchString}${postfix}`;
 	const {
 		_selected: selected,
 		static: {
@@ -30,14 +34,14 @@ export function buildPagination({
 	const pagination = [];
 	if (first && page > 1) {
 		pagination.push({
-			href: `?${name}=${searchString}`,
+			href,
 			text: localize({locale, key: 'search.pagination.first'})
 		});
 	}
 
 	if (prev && page > 2) {
 		pagination.push({
-			href: `?${name}=${searchString}&page=${page - 1}`,
+			href: `${href}&page=${page - 1}`,
 			text: localize({locale, key: 'search.pagination.prev'})
 		});
 	}
@@ -51,7 +55,7 @@ export function buildPagination({
 	for (let i = firstPageToShow; i <= lastPageToShow; i += 1) {
 		//log.info(toStr({i, page}));
 		pagination.push({
-			href: i === page ? null : `?${name}=${searchString}${i === 1 ? '' : '&page=' + i}`, // eslint-disable-line prefer-template
+			href: i === page ? null : `${href}${i === 1 ? '' : '&page=' + i}`, // eslint-disable-line prefer-template
 			text: `${i}`
 		});
 	} // for
@@ -59,13 +63,13 @@ export function buildPagination({
 	if (page < pages) {
 		if (next && page < (pages - 1)) {
 			pagination.push({
-				href: `?${name}=${searchString}&page=${page + 1}`,
+				href: `${href}&page=${page + 1}`,
 				text: localize({locale, key: 'search.pagination.next'})
 			});
 		}
 		if (last) {
 			pagination.push({
-				href: `?${name}=${searchString}&page=${pages}`,
+				href: `${href}&page=${pages}`,
 				text: localize({locale, key: 'search.pagination.last'})
 			});
 		}

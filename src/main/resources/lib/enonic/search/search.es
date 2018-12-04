@@ -136,6 +136,7 @@ export function search({
 	const pages = Math.ceil(queryRes.total / count); //log.info(toStr({pages}));
 
 	const pagination = buildPagination({
+		facetId: params.facetId,
 		optionSet: paginationOptionSet,
 		locale,
 		name,
