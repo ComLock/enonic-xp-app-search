@@ -113,13 +113,6 @@
 			</items>
 		</field-set>
 
-		<!--field-set name="aggregationsFieldSet">
-			<label>Aggregation(s)</label>
-			<items>
-				<inline mixin="aggregationsSelector"/>
-			</items>
-		</field-set-->
-
 		<field-set name="facetsFieldSet">
 			<label>Facets</label>
 			<items>
