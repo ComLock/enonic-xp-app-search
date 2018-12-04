@@ -28,6 +28,7 @@ dependencies {
 	compile "com.enonic.xp:portal-api:${xpVersion}"
 
 	include "com.enonic.xp:lib-admin:${xpVersion}"
+	//include "com.enonic.xp:lib-auth:${xpVersion}"
 	//include "com.enonic.xp:lib-cluster:${xpVersion}"
 	include "com.enonic.xp:lib-content:${xpVersion}"
 	include "com.enonic.xp:lib-context:${xpVersion}"

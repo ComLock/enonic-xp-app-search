@@ -80,6 +80,30 @@ export function search({
 	const multiRepoConnection = multiRepoConnect({sources});
 
 	const filters = {};
+	const boolean = {};
+	if (data.filters) {
+		//log.info(toStr({filters: data.filters}));
+		const selectedFilterGroups = forceArray(data.filters._selected); //log.info(toStr({selectedFilterGroups}));
+		selectedFilterGroups.forEach((filterGroup) => {
+			//log.info(toStr({filterGroup}));
+			boolean[filterGroup] = [];
+			const selectedFilters = forceArray(data.filters[filterGroup].filter._selected); //log.info(toStr({selectedFilters}));
+			selectedFilters.forEach((filterType) => {
+				const filter = {};
+				if (['exists', 'notExists', 'hasValue'].includes(filterType)) {
+					filter.field = data.filters[filterGroup].filter[filterType].field;
+				}
+				if (['hasValue', 'ids'].includes(filterType)) {
+					filter.values = forceArray(data.filters[filterGroup].filter[filterType].values);
+				}
+				boolean[filterGroup].push({[filterType]: filter});
+			});
+		}); // forEach filterGroup
+		filters.boolean = boolean;
+	} // if filters
+	//log.info(toStr({filters}));
+
+
 	const facetCategories = new Facets({
 		contentCache: CONTENT_CACHE,
 		facetCategoryIds: recipeContent.data.facetCategoryIds,
