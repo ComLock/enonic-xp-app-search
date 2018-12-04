@@ -53,7 +53,7 @@ export function search({
 }) {
 	//log.info(toStr({params}));
 	const name = params.name || 'q';
-	const searchString = params[name] || ''; // TODO Hardcode
+	const searchString = params.searchString || params[name] || '';
 
 	// Returns the preferred locale based on the current HTTP request, or the server default locale if none is specified.
 	const locale = params.locale || getLocale(); //log.info(toStr({locale}));
