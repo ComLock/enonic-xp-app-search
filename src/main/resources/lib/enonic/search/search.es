@@ -145,11 +145,11 @@ export function search({
 		pages
 	}); //log.info(toStr({pagination}));
 
-	const resultMappings = forceArray(data.resultMappings).map(({conditionId, doBreak = false, mappings}) => {
+	const resultMappings = forceArray(data.resultMappings).map(({conditionId/*, doBreak = false*/, mappings}) => {
 		const conditionContent = cachedContent({cache: CONTENT_CACHE, key: conditionId}); //log.info(toStr({conditionContent}));
 		return {
 			condition: conditionContent.data,
-			doBreak,
+			//doBreak,
 			mappings: forceArray(mappings)
 		};
 	}); //log.info(toStr({resultMappings}));
@@ -222,7 +222,7 @@ export function search({
 						set(mapped, target, v);
 					});
 				}
-				if (resultMappings[i].doBreak) { break; }
+				//if (resultMappings[i].doBreak) { break; } // TODO Document why
 			}
 			return mapped;
 		})

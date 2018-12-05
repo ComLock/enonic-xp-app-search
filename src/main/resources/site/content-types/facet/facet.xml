@@ -21,10 +21,37 @@
 
 		<option-set name="valueType">
 			<label>Value type</label>
-			<help-text>You can select up to 2 options</help-text>
+			<help-text></help-text>
 			<expanded>false</expanded>
 			<occurrences minimum="1" maximum="1"/>
 			<options minimum="1" maximum="1">
+
+				<option name="nodeId">
+					<label>Node</label>
+					<default>true</default>
+					<items>
+						<input name="value" type="CustomSelector">
+							<label>Id</label>
+							<occurrences minimum="1" maximum="1"/>
+							<config>
+								<service>nodeSelector</service>
+
+								<!-- Named params -->
+								<!--param value="systemRepo">true</param--><!-- default is false -->
+								<param value="cmsRepo">true</param><!-- default is false -->
+								<param value="cmsRepoBranch">draft</param><!-- default is master -->
+								<param value="include">com.enonic.app.crawler.*</param><!-- regexp -->
+								<param value="exclude">snapshot</param><!-- regexp -->
+								<!--param value="login">su</param-->
+								<!--param value="userStore">system</param-->
+								<!--param value="principals">role:system.admin</param-->
+
+								<!-- ...Rest params value is repoId and content is branch -->
+								<!--param value="com.enonic.app.crawler-recipename">master</param-->
+							</config>
+						</input>
+					</items>
+				</option>
 
 				<option name="content">
 					<label>Content</label>

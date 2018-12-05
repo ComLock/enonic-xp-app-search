@@ -134,6 +134,18 @@
 		<field-set name="resultMappingFieldSet">
 			<label>Result mapping(s)</label>
 			<items>
+				<input name="resultMappingIds" type="ContentSelector">
+					<label>Condition</label>
+					<occurrences minimum="0" maximum="1"/>
+					<config>
+						<relationshipType>system:reference</relationshipType>
+						<allowContentType>resultMapping</allowContentType>
+						<allowPath>${site}</allowPath>
+						<treeMode>false</treeMode>
+						<showStatus>false</showStatus>
+						<hideToggleIcon>false</hideToggleIcon>
+					</config>
+				</input>
 				<item-set name="resultMappings">
 					<label>Result mapping</label>
 					<occurrences minimum="1" maximum="0"/>
@@ -172,10 +184,13 @@
 								</input>
 							</items>
 						</item-set>
-						<input name="doBreak" type="CheckBox">
+
+						<!-- TODO Document why -->
+						<!--input name="doBreak" type="CheckBox">
 							<label>Break on condition</label>
 							<default>unchecked</default>
-						</input>
+						</input-->
+
 					</items>
 				</item-set>
 			</items>
