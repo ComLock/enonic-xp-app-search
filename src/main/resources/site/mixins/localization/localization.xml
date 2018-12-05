@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<mixin>
+	<display-name>Localization</display-name>
+	<items>
+		<item-set name="localization">
+			<label>Localization</label>
+			<occurrences minimum="0" maximum="0"/>
+			<items>
+				<input name="localeId" type="ContentSelector">
+					<label>Locale</label>
+					<occurrences minimum="1" maximum="1"/>
+					<config>
+						<relationshipType>system:reference</relationshipType>
+						<allowContentType>locale</allowContentType>
+						<allowPath>${site}</allowPath>
+						<treeMode>false</treeMode>
+						<showStatus>false</showStatus>
+						<hideToggleIcon>false</hideToggleIcon>
+					</config>
+				</input>
+				<input name="translation" type="TextLine">
+					<label>Translation</label>
+					<occurrences minimum="1" maximum="1"/>
+				</input>
+			</items>
+		</item-set><!-- localization -->
+	</items>
+</mixin>

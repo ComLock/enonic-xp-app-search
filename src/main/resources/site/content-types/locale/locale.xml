@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<content-type>
+	<display-name>Locale</display-name>
+	<super-type>base:structured</super-type>
+	<is-abstract>false</is-abstract>
+	<is-final>true</is-final>
+	<allow-child-content>true</allow-child-content>
+	<form>
+		<!-- https://www.oracle.com/technetwork/java/javase/java8locales-2095355.html -->
+		<input name="language" type="TextLine">
+			<label>Language (ISO 639)</label>
+			<occurrences minimum="1" maximum="1"/>
+		</input>
+		<input name="country" type="TextLine">
+			<label>Country (ISO 3166)</label>
+			<occurrences minimum="0" maximum="1"/>
+		</input>
+		<!--input name="script" type="TextLine">
+			<label>Script (ISO 15924)</label>
+			<occurrences minimum="0" maximum="1"/>
+		</input-->
+	</form>
+</content-type>

@@ -51,6 +51,12 @@ export function search({
 	recipeContent,
 	recipeId = recipeContent ? recipeContent._id : params.recipeId
 }) {
+	if (params.clearCache) {
+		log.info('Clearing content and query cache.');
+		CONTENT_CACHE.clear();
+		QUERY_CACHE.clear();
+	}
+
 	//log.info(toStr({params}));
 	const name = params.name || 'q';
 	const searchString = params.searchString || params[name] || '';
@@ -108,6 +114,7 @@ export function search({
 		contentCache: CONTENT_CACHE,
 		facetCategoryIds: recipeContent.data.facetCategoryIds,
 		filters,
+		locale,
 		multiRepoConnection,
 		params,
 		query,

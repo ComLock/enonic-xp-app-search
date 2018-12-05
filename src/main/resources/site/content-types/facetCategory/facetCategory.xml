@@ -18,5 +18,12 @@
 				<hideToggleIcon>false</hideToggleIcon>
 			</config>
 		</input>
+
+		<field-set name="localizationFieldSet">
+			<label>Localization</label>
+			<items>
+				<inline mixin="localization"/>
+			</items>
+		</field-set>
 	</form>
 </content-type>

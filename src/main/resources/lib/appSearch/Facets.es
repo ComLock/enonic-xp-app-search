@@ -40,6 +40,36 @@ function uriObjFromParams(params) {
 }
 
 
+function localizeFromContent({content, contentCache, locale}) {
+	//log.info(toStr({content, contentCache, locale}));
+	let rv = content.displayName;
+	if (!locale) { return rv; }
+	if (content.data.localization) {
+		const localizations = {};
+		const locales = forceArray(content.data.localization);
+		for (let i = 0; i < locales.length; i += 1) {
+			const {localeId, translation} = locales[i];
+			if (localeId) {
+				const localeContent = cachedContent({cache: contentCache, key: localeId}); //log.info(toStr({localeContent}));
+				const {language, country} = localeContent.data; //log.info(toStr({language, country}));
+				const lowerCaseLocale = locale.toLowerCase();
+				if (lowerCaseLocale.startsWith(language.toLowerCase())) {
+					rv = translation;
+					break;
+				} else if (country && lowerCaseLocale.startsWith(country.toLowerCase())) {
+					rv = translation;
+					break;
+				}
+				localizations[language] = translation;
+			}
+		}
+		//log.info(toStr({localizations}));
+	}
+	//log.info(toStr({rv}));
+	return rv;
+}
+
+
 //──────────────────────────────────────────────────────────────────────────────
 // Public class
 //──────────────────────────────────────────────────────────────────────────────
@@ -48,6 +78,7 @@ export class Facets {
 		contentCache,
 		facetCategoryIds,
 		filters = {},
+		locale,
 		multiRepoConnection,
 		params,
 		query,
@@ -59,7 +90,7 @@ export class Facets {
 		if (facetCategoryIds) {
 			forceArray(facetCategoryIds).forEach((facetCategoryId) => {
 				const facetCategoryContent = cachedContent({cache: contentCache, key: facetCategoryId});
-				const facetCategoryName = facetCategoryContent.displayName;
+				const facetCategoryName = localizeFromContent({content: facetCategoryContent, contentCache, locale});
 				this.facetCategories[facetCategoryId] = {
 					activeCount: 0,
 					hasValues: {},
@@ -120,7 +151,7 @@ export class Facets {
 						this.facetCategories[facetCategoryId].facets[facetId] = {
 							active,
 							href: facetUri.toString(),
-							name: facetContent.displayName,
+							name: localizeFromContent({content: facetContent, contentCache, locale}),
 							path,
 							removeHref,
 							value
