@@ -99,6 +99,8 @@ export class Facets {
 					name: facetCategoryName,
 					paths: []
 				};
+				const facetCategoryUri = uriObjFromParams(params);
+				const facetCategoryClearUri = uriObjFromParams(params);
 				if (!facetCategoryContent) {
 					const msg = `Could not find facetCategory with key:${facetCategoryId}`;
 					log.error(msg);
@@ -130,8 +132,10 @@ export class Facets {
 						const facetUri = uriObjFromParams(params);
 						const active = !!params.facetId && params.facetId.includes(facetId);
 						facetUri.deleteQueryParam('facetId', facetId);
+						facetCategoryClearUri.deleteQueryParam('facetId', facetId);
 						const removeHref = facetUri.toString();
 						facetUri.addQueryParam('facetId', facetId);
+						facetCategoryUri.addQueryParam('facetId', facetId);
 						if (active) {
 							this.facetCategories[facetCategoryId].activeCount += 1;
 							//log.info(`facetId:${facetId} is active with path:${path} value:${value}`);
@@ -159,6 +163,8 @@ export class Facets {
 					});
 					this.facetCategories[facetCategoryId].hasValues = hasValuesInCategory;
 					this.facetCategories[facetCategoryId].paths = pathsInCategory;
+					this.facetCategories[facetCategoryId].href = facetCategoryUri.toString();
+					this.facetCategories[facetCategoryId].clearHref = facetCategoryClearUri.toString();
 				} // if facetIds
 			}); // forEach facetCategoryId
 		} // if facetCategoryIds
@@ -254,9 +260,11 @@ export class Facets {
 
 	getCategoriesArray() {
 		return Object.values(this.facetCategories).map(({
-			activeCount, facets, inactiveCount, name
+			activeCount, clearHref, facets, href: categoryHref, inactiveCount, name
 		}) => ({
 			activeCount,
+			clearHref,
+			href: categoryHref,
 			inactiveCount,
 			name,
 			facets: Object.values(facets).map(({
