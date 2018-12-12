@@ -53,6 +53,8 @@
 								<!--param value="userStore">system</param-->
 								<!--param value="principals">role:system.admin</param-->
 
+								<param value="filtersJson">{"hasValue":{"field":"type","values":["com.enonic.app.crawler:tag"]}}</param>
+
 								<!-- ...Rest params value is repoId and content is branch -->
 								<!--param value="com.enonic.app.crawler-recipename">master</param-->
 							</config>
