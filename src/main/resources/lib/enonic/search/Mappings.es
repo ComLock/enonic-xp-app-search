@@ -147,7 +147,10 @@ export class Mappings {
 						set(
 							mapped,
 							target,
-							forceArray(actual).map(repoBranchNodeId => `${tagIdToLocalizedFacetCategoryName[repoBranchNodeId]}: ${tagIdToLocalizedFacetName[repoBranchNodeId]}`).sort().join(', ')
+							forceArray(actual).map(repoBranchNodeId => ({
+								localizedFacetCategoryName: tagIdToLocalizedFacetCategoryName[repoBranchNodeId],
+								localizedFacetName: tagIdToLocalizedFacetName[repoBranchNodeId]
+							}))
 						);
 					}
 					//findFacetFromNodeId
