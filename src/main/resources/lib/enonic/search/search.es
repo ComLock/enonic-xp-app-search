@@ -1,19 +1,11 @@
 //──────────────────────────────────────────────────────────────────────────────
-// Node modules (webpacked)
-//──────────────────────────────────────────────────────────────────────────────
-import set from 'set-value';
-import highlightSearchResult from 'highlight-search-result';
-
-
-//──────────────────────────────────────────────────────────────────────────────
 // Enonic XP libs (externals not webpacked)
 //──────────────────────────────────────────────────────────────────────────────
 import {newCache} from '/lib/cache';
 //import {toStr} from '/lib/enonic/util';
 import {forceArray} from '/lib/enonic/util/data';
-import {dlv} from '/lib/enonic/util/object';
 import {getLocale} from '/lib/xp/admin';
-import {connect, multiRepoConnect} from '/lib/xp/node';
+import {multiRepoConnect} from '/lib/xp/node';
 
 
 //──────────────────────────────────────────────────────────────────────────────
@@ -24,12 +16,18 @@ import {buildQuery} from '/lib/appSearch/buildQuery';
 import {cachedContent} from '/lib/appSearch/cachedContent';
 import {cachedQuery} from '/lib/appSearch/cachedQuery';
 import {Facets} from '/lib/appSearch/Facets';
+import {Mappings} from '/lib/enonic/search/Mappings';
 
 
 //──────────────────────────────────────────────────────────────────────────────
 // Private constants
 //──────────────────────────────────────────────────────────────────────────────
 const CONTENT_CACHE = newCache({
+	expire: 3600,
+	size: 100
+});
+
+const NODE_CACHE = newCache({
 	expire: 3600,
 	size: 100
 });
@@ -52,8 +50,9 @@ export function search({
 	recipeId = recipeContent ? recipeContent._id : params.recipeId
 }) {
 	if (params.clearCache) {
-		log.info('Clearing content and query cache.');
+		log.info('Clearing content, node and query cache.');
 		CONTENT_CACHE.clear();
+		NODE_CACHE.clear();
 		QUERY_CACHE.clear();
 	}
 
@@ -109,8 +108,7 @@ export function search({
 	} // if filters
 	//log.info(toStr({filters}));
 
-
-	const facetCategories = new Facets({
+	const facets = new Facets({
 		contentCache: CONTENT_CACHE,
 		facetCategoryIds: recipeContent.data.facetCategoryIds,
 		filters,
@@ -119,7 +117,8 @@ export function search({
 		params,
 		query,
 		queryCache: QUERY_CACHE
-	}).getCategoriesArray(); //log.info(toStr({facetCategories}));
+	});
+	const facetCategories = facets.getCategoriesArray(); //log.info(toStr({facetCategories}));
 	//log.info(toStr({filters}));
 
 	let page = params.page ? parseInt(params.page, 10) : 1; // NOTE First index is 1 not 0
@@ -152,14 +151,10 @@ export function search({
 		pages
 	}); //log.info(toStr({pagination}));
 
-	const resultMappings = forceArray(data.resultMappings).map(({conditionId/*, doBreak = false*/, mappings}) => {
-		const conditionContent = cachedContent({cache: CONTENT_CACHE, key: conditionId}); //log.info(toStr({conditionContent}));
-		return {
-			condition: conditionContent.data,
-			//doBreak,
-			mappings: forceArray(mappings)
-		};
-	}); //log.info(toStr({resultMappings}));
+	const mappings = new Mappings({
+		contentCache: CONTENT_CACHE,
+		mappingIds: forceArray(data.resultMappingIds)
+	});
 
 	return {
 		params: {
@@ -179,59 +174,12 @@ export function search({
 		repoIds,
 		//aggregations: aggregationsObj.handleResult(queryRes.aggregations),
 		total: queryRes.total,
-		hits: queryRes.hits.map(({
-			id, score, repoId, branch
-		}) => {
-			const repoConnection = connect({
-				repoId,
-				branch,
-				principals: ['role:system.admin'] // TODO Remove hardcode?
-			});
-			const node = repoConnection.get(id); //log.info(toStr({node}));
-			const hit = {
-				id,
-				score,
-				repoId,
-				branch,
-				node
-			};
-			const mapped = {};
-			for (let i = 0; i < resultMappings.length; i += 1) {
-				const {field, operator, value} = resultMappings[i].condition;
-				//log.info(toStr({field, operator, value}));
-				const actual = dlv(hit, field); //log.info(toStr({actual}));
-				let truthy = false;
-				switch (operator) {
-				case 'eq': truthy = actual == value; break; // eslint-disable-line eqeqeq
-				case 'f': truthy = !actual; break;
-				case 'ne': truthy = actual != value; break; // eslint-disable-line eqeqeq
-				case 't': truthy = actual; break;
-				default: {
-					const msg = `Unknown operator:${operator}!`;
-					log.error(msg);
-					throw new Error(msg);
-				}
-				} // switch
-				//log.info(toStr({truthy}));
-				if (truthy) {
-					resultMappings[i].mappings.forEach(({
-						highlight, lengthLimit, source, target
-					}) => {
-						const textToHighlight = dlv(hit, source);
-						let v;
-						if (highlight) {
-							v = highlightSearchResult(textToHighlight, searchString, lengthLimit || textToHighlight.length, str => `<b>${str}</b>`);
-						} else {
-							v = lengthLimit
-								? textToHighlight.substring(0, lengthLimit)
-								: textToHighlight;
-						}
-						set(mapped, target, v);
-					});
-				}
-				//if (resultMappings[i].doBreak) { break; } // TODO Document why
-			}
-			return mapped;
-		})
+		hits: queryRes.hits.map(hit => mappings.handleMultirepoQueryHit({
+			...hit,
+			tagIdToLocalizedFacetCategoryName: facets.tagIdToLocalizedFacetCategoryName,
+			tagIdToLocalizedFacetName: facets.tagIdToLocalizedFacetName,
+			nodeCache: NODE_CACHE,
+			searchString
+		}))
 	};
 } // function search

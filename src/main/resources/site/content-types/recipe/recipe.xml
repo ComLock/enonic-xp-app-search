@@ -132,11 +132,11 @@
 		</field-set>
 
 		<field-set name="resultMappingFieldSet">
-			<label>Result mapping(s)</label>
+			<label>Mapping(s)</label>
 			<items>
 				<input name="resultMappingIds" type="ContentSelector">
-					<label>Condition</label>
-					<occurrences minimum="0" maximum="1"/>
+					<label>Mapping(s)</label>
+					<occurrences minimum="1" maximum="0"/>
 					<config>
 						<relationshipType>system:reference</relationshipType>
 						<allowContentType>resultMapping</allowContentType>
@@ -146,53 +146,6 @@
 						<hideToggleIcon>false</hideToggleIcon>
 					</config>
 				</input>
-				<item-set name="resultMappings">
-					<label>Result mapping</label>
-					<occurrences minimum="1" maximum="0"/>
-					<items>
-						<input name="conditionId" type="ContentSelector">
-							<label>Condition</label>
-							<occurrences minimum="0" maximum="1"/>
-							<config>
-								<relationshipType>system:reference</relationshipType>
-								<allowContentType>condition</allowContentType>
-								<allowPath>${site}</allowPath>
-								<treeMode>false</treeMode>
-								<showStatus>false</showStatus>
-								<hideToggleIcon>false</hideToggleIcon>
-							</config>
-						</input>
-						<item-set name="mappings">
-							<label>Mapping</label>
-							<occurrences minimum="1" maximum="0"/>
-							<items>
-								<input name="source" type="TextLine">
-									<label>Source field</label>
-									<occurrences minimum="1" maximum="1"/>
-								</input>
-								<input name="target" type="TextLine">
-									<label>Target field</label>
-									<occurrences minimum="1" maximum="1"/>
-								</input>
-								<input name="highlight" type="CheckBox">
-									<label>Highlight?</label>
-									<default>unchecked</default>
-								</input>
-								<input name="lengthLimit" type="Long">
-									<label>Limit length to</label>
-									<occurrences minimum="0" maximum="1"/>
-								</input>
-							</items>
-						</item-set>
-
-						<!-- TODO Document why -->
-						<!--input name="doBreak" type="CheckBox">
-							<label>Break on condition</label>
-							<default>unchecked</default>
-						</input-->
-
-					</items>
-				</item-set>
 			</items>
 		</field-set>
 	</form>

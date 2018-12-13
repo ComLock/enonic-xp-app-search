@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<content-type>
+	<display-name>Result mapping</display-name>
+	<super-type>base:structured</super-type>
+	<is-abstract>false</is-abstract>
+	<is-final>true</is-final>
+	<allow-child-content>true</allow-child-content>
+	<form>
+		<input name="target" type="TextLine">
+			<label>Target field</label>
+			<occurrences minimum="1" maximum="1"/>
+		</input>
+		<item-set name="mappings">
+			<label>Mapping</label>
+			<occurrences minimum="1" maximum="0"/>
+			<items>
+				<input name="conditionId" type="ContentSelector">
+					<label>Condition</label>
+					<occurrences minimum="0" maximum="1"/>
+					<config>
+						<relationshipType>system:reference</relationshipType>
+						<allowContentType>condition</allowContentType>
+						<allowPath>${site}</allowPath>
+						<treeMode>false</treeMode>
+						<showStatus>false</showStatus>
+						<hideToggleIcon>false</hideToggleIcon>
+					</config>
+				</input>
+
+				<!-- TODO Use field selector -->
+				<input name="source" type="TextLine">
+					<label>Source field</label>
+					<occurrences minimum="1" maximum="1"/>
+				</input>
+
+				<option-set name="valueType">
+					<label>Value type</label>
+					<help-text></help-text>
+					<expanded>false</expanded>
+					<occurrences minimum="1" maximum="1"/>
+					<options minimum="1" maximum="1">
+
+						<option name="facet">
+							<label>Facet</label>
+							<items>
+							</items>
+						</option>
+
+						<!--option name="node">
+							<label>Node</label>
+							<items>
+
+							</items>
+						</option-->
+
+						<!-- TODO option name="content">
+							<label>Content</label>
+							<items>
+							</items>
+						</option-->
+
+						<option name="string">
+							<label>String</label>
+							<default>true</default>
+							<items>
+								<input name="highlight" type="CheckBox">
+									<label>Highlight?</label>
+									<default>unchecked</default>
+								</input>
+								<input name="lengthLimit" type="Long">
+									<label>Limit length to</label>
+									<occurrences minimum="0" maximum="1"/>
+								</input>
+							</items>
+						</option>
+
+						<option name="long">
+							<label>Long</label>
+							<items>
+							</items>
+						</option>
+
+						<option name="boolean">
+							<label>Boolean</label>
+							<items>
+							</items>
+						</option>
+
+						<option name="double">
+							<label>Double</label>
+							<items>
+							</items>
+						</option>
+
+						<!-- TODO Date, DateTime, GeoPoint, Image, Media, Time -->
+
+					</options>
+				</option-set><!-- valueType -->
+
+				<!-- TODO Document why -->
+				<!--input name="doBreak" type="CheckBox">
+					<label>Break on condition</label>
+					<default>unchecked</default>
+				</input-->
+
+			</items>
+		</item-set>
+	</form>
+</content-type>

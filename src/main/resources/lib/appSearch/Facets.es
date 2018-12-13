@@ -85,6 +85,10 @@ export class Facets {
 		queryCache
 	}) {
 		//log.info(toStr({facetCategoryIds}));
+		//this.tagIdToFacetCategoryId = {};
+		this.tagIdToLocalizedFacetCategoryName = {};
+		//this.tagIdToFacetId = {};
+		this.tagIdToLocalizedFacetName = {};
 		this.facetCategories = {};
 		const hasValues = {};
 		if (facetCategoryIds) {
@@ -129,6 +133,9 @@ export class Facets {
 						const {path} = cachedContent({cache: contentCache, key: fieldId}).data; //log.info(toStr({path}));
 						if (!pathsInCategory.includes(path)) { pathsInCategory.push(path); }
 						const {value} = facetContent.data.valueType[selectedValueType]; //log.info(toStr({value}));
+						//this.tagIdToFacetCategoryId[value] = facetCategoryId;
+						this.tagIdToLocalizedFacetCategoryName[value] = facetCategoryName;
+						//this.tagIdToFacetId[value] = facetId;
 						const facetUri = uriObjFromParams(params);
 						const active = !!params.facetId && params.facetId.includes(facetId);
 						facetUri.deleteQueryParam('facetId', facetId);
@@ -152,10 +159,12 @@ export class Facets {
 						} else {
 							this.facetCategories[facetCategoryId].inactiveCount += 1;
 						}
+						const localizedFacetName = localizeFromContent({content: facetContent, contentCache, locale});
+						this.tagIdToLocalizedFacetName[value] = localizedFacetName;
 						this.facetCategories[facetCategoryId].facets[facetId] = {
 							active,
 							href: facetUri.toString(),
-							name: localizeFromContent({content: facetContent, contentCache, locale}),
+							name: localizedFacetName,
 							path,
 							removeHref,
 							value
@@ -252,11 +261,12 @@ export class Facets {
 			} // if properties.hasValues
 		});
 		//log.info(toStr({facetCategories: this.facetCategories}));
-		//log.info(toStr({facetCategories}));
-
-		//log.info(toStr({contents: this.contents}));
-		//log.info(toStr({this: this}));
+		//log.info(toStr({tagIdToFacetCategoryId: this.tagIdToFacetCategoryId}));
+		//log.info(toStr({tagIdToFacetId: this.tagIdToFacetId}));
+		//log.info(toStr({tagIdToLocalizedFacetCategoryName: this.tagIdToLocalizedFacetCategoryName}));
+		//log.info(toStr({tagIdToLocalizedFacetName: this.tagIdToLocalizedFacetName}));
 	} // constructor
+
 
 	getCategoriesArray() {
 		return Object.values(this.facetCategories).map(({
