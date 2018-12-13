@@ -18,7 +18,7 @@ export function buildPagination({
 	page,
 	pages
 }) {
-	const postfix = forceArray(facetId).map(f => `&facetId=${f}`).join('');
+	const postfix = facetId ? forceArray(facetId).map(f => `&facetId=${f}`).join('') : '';
 	const href = `?${name}=${searchString}${postfix}`;
 	const {
 		_selected: selected,
