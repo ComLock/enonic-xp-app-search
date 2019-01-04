@@ -2,11 +2,11 @@
 // Enonic XP libs (externals not webpacked)
 //──────────────────────────────────────────────────────────────────────────────
 import {newCache} from '/lib/cache';
-//import {toStr} from '/lib/enonic/util';
+import {toStr} from '/lib/enonic/util';
 import {forceArray} from '/lib/enonic/util/data';
 import {getLocale} from '/lib/xp/admin';
 import {multiRepoConnect} from '/lib/xp/node';
-
+import {applySynonyms} from '/lib/enonic/yase/applySynonyms';
 
 //──────────────────────────────────────────────────────────────────────────────
 // Local libs (Absolute path without extension so it doesn't get webpacked)
@@ -71,7 +71,15 @@ export function search({
 	}
 
 	const {data} = recipeContent;
-	const {expressionId, pagination: paginationOptionSet} = data;
+	const {expressionId, pagination: paginationOptionSet, thesauri} = data;
+	log.info(toStr({thesauri}));
+
+	const searchStringWithSynonyms = applySynonyms({
+		//expand: true, // default is false
+		searchString,
+		thesauri
+	});
+	log.info(toStr({searchStringWithSynonyms}));
 
 	// Allowing empty query:
 	const query = expressionId && searchString ? buildQuery({expressionId, searchString}) : ''; //log.info(toStr({query}));
