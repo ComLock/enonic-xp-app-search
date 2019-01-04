@@ -69,6 +69,14 @@
 						<hideToggleIcon>false</hideToggleIcon>
 					</config>
 				</input>
+
+				<input name="thesauri" type="CustomSelector">
+					<label>Thesauri (synonyms)</label>
+					<occurrences minimum="0" maximum="0"/>
+					<config>
+						<service>thesauriSelector</service>
+					</config>
+				</input>
 			</items>
 		</field-set>
 
