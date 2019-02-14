@@ -94,7 +94,7 @@ export function search({
 
 	const filters = {};
 	const boolean = {};
-	if (data.filters) {
+	if (data.filters && data.filters._selected) {
 		//log.info(toStr({filters: data.filters}));
 		const selectedFilterGroups = forceArray(data.filters._selected); //log.info(toStr({selectedFilterGroups}));
 		selectedFilterGroups.forEach((filterGroup) => {

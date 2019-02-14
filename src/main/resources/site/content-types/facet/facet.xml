@@ -47,13 +47,13 @@
 								<!--param value="systemRepo">true</param--><!-- default is false -->
 								<param value="cmsRepo">true</param><!-- default is false -->
 								<param value="cmsRepoBranch">draft</param><!-- default is master -->
-								<param value="include">com.enonic.app.crawler.*</param><!-- regexp -->
-								<param value="exclude">snapshot</param><!-- regexp -->
+								<param value="include">com.enonic.yase</param><!-- regexp -->
+								<!--param value="exclude">snapshot</param--><!-- regexp -->
 								<!--param value="login">su</param-->
 								<!--param value="userStore">system</param-->
 								<!--param value="principals">role:system.admin</param-->
 
-								<param value="filtersJson">{"hasValue":{"field":"type","values":["com.enonic.app.crawler:tag"]}}</param>
+								<param value="filtersJson">{"hasValue":{"field":"type","values":["com.enonic.yase:tag"]}}</param>
 
 								<!-- ...Rest params value is repoId and content is branch -->
 								<!--param value="com.enonic.app.crawler-recipename">master</param-->
