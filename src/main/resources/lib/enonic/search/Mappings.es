@@ -109,10 +109,10 @@ export class Mappings {
 				const {
 					field, operator, value, source, _selected, string
 				} = mappings[j];
-				const actual = dlv(hit, field); //log.info(toStr({actual}));
 				/*log.info(toStr({
-					field, operator, value, source, _selected, facet, string
+					hit, field, operator, value, source, _selected, string
 				}));*/
+				const actual = dlv(hit, field); //log.info(toStr({actual}));
 				let truthy = false;
 				switch (operator) {
 				case 'eq': truthy = actual == value; break; // eslint-disable-line eqeqeq
