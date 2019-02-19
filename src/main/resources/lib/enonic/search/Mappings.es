@@ -28,7 +28,8 @@ export class Mappings {
 		contentCache,
 		mappingIds
 	}) {
-		//log.info(toStr({contentCache, mappingIds}));
+		//log.info(toStr({contentCache}));
+		//log.info(toStr({mappingIds}));
 
 		const mappingContents = mappingIds.map(key => cachedContent({cache: contentCache, key}));
 		//log.info(toStr({mappingContents}));

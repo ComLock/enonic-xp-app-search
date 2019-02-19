@@ -72,7 +72,7 @@ export function search({
 
 	const {data} = recipeContent;
 	const {expressionId, pagination: paginationOptionSet, thesauri} = data;
-	log.info(toStr({thesauri}));
+	//log.info(toStr({thesauri}));
 
 	const searchStringWithSynonyms = applySynonyms({
 		//expand: true, // default is false
@@ -163,6 +163,7 @@ export function search({
 		contentCache: CONTENT_CACHE,
 		mappingIds: forceArray(data.resultMappingIds)
 	});
+	//log.info(toStr({mappings}));
 
 	return {
 		params: {
