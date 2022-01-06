@@ -9,7 +9,7 @@ import set from 'set-value';
 //──────────────────────────────────────────────────────────────────────────────
 // Enonic XP libs (externals not webpacked)
 //──────────────────────────────────────────────────────────────────────────────
-//import {toStr} from '/lib/enonic/util';
+import {toStr} from '/lib/enonic/util';
 import {dlv} from '/lib/enonic/util/object';
 import {forceArray} from '/lib/enonic/util/data';
 
@@ -171,13 +171,14 @@ export class Facets {
 						};
 					});
 					this.facetCategories[facetCategoryId].hasValues = hasValuesInCategory;
+					//log.info(toStr({hasValuesInCategory}));
 					this.facetCategories[facetCategoryId].paths = pathsInCategory;
 					this.facetCategories[facetCategoryId].href = facetCategoryUri.toString();
 					this.facetCategories[facetCategoryId].clearHref = facetCategoryClearUri.toString();
 				} // if facetIds
 			}); // forEach facetCategoryId
 		} // if facetCategoryIds
-		//log.info(toStr({hasValues}));
+		log.info(toStr({hasValues}));
 		const hasValueEntries = Object.entries(hasValues); //log.info(toStr({hasValueEntries}));
 		if (hasValueEntries.length && !dlv(filters, 'boolean.must')) {
 			set(filters, 'boolean.must', []);
@@ -192,7 +193,7 @@ export class Facets {
 			});
 		});
 		//log.info(toStr({filters}));
-		//log.info(toStr({facetCategories: this.facetCategories}));
+		log.info(toStr({facetCategories: this.facetCategories}));
 		Object.entries(this.facetCategories).forEach(([
 			categoryId, //eslint-disable-line no-unused-vars
 			properties

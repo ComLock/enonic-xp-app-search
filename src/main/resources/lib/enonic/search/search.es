@@ -131,7 +131,7 @@ export function search({
 
 	let page = params.page ? parseInt(params.page, 10) : 1; // NOTE First index is 1 not 0
 	const count = params.count ? parseInt(params.count, 10) : 10;
-	const start = params.count ? parseInt(params.start, 10) : (page - 1) * count; // NOTE First index is 0 not 1
+	const start = params.start ? parseInt(params.start, 10) : (page - 1) * count; // NOTE First index is 0 not 1
 	/*log.info(toStr({
 		count,
 		page,
